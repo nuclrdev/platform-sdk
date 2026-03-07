@@ -83,6 +83,15 @@ public interface FilePanelProvider {
     }
 
     /**
+     * Optional navigation remap hook for Enter / double-click in panel listing.
+     * Providers can return a different target path (e.g. virtual node -> mounted
+     * backend root). Returning {@code null} means "handled, do not navigate".
+     */
+    default Path resolveEnter(Path currentDirectory, Path selectedPath) {
+        return selectedPath;
+    }
+
+    /**
      * Sort priority used when displaying roots from multiple providers.
      * Lower values appear first. Defaults to {@code 100}.
      */
