@@ -11,6 +11,10 @@ public interface ArchiveMountProvider {
 
 	Path mountAndGetRoot(Path file) throws IOException;
 
+	default Path mountAndGetRoot(Path file, ArchiveMountRequest request) throws IOException {
+		return mountAndGetRoot(file);
+	}
+
 	Capabilities capabilities();
 
 	default int priority() {

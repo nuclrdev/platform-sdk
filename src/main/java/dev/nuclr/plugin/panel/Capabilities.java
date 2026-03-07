@@ -51,7 +51,8 @@ public record Capabilities(
                 EnumSet.of(
                         Operation.LIST, Operation.READ, Operation.WRITE, Operation.DELETE,
                         Operation.MOVE, Operation.RENAME, Operation.COPY,
-                        Operation.CREATE_DIRECTORY, Operation.WATCH),
+                        Operation.CREATE_DIRECTORY, Operation.WATCH, Operation.GET_ATTRIBUTES,
+                        Operation.UPDATE_ATTRIBUTES),
                 true, false, false, true);
     }
 

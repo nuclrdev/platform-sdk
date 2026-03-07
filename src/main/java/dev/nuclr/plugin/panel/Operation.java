@@ -16,5 +16,11 @@ public enum Operation {
     COPY,
     CREATE_DIRECTORY,
     WATCH,
+    GET_ATTRIBUTES,
+    UPDATE_ATTRIBUTES,
+    /**
+     * @deprecated Use {@link #UPDATE_ATTRIBUTES}.
+     */
+    @Deprecated
     SET_PERMISSIONS
 }

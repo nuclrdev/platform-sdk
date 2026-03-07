@@ -76,6 +76,13 @@ public interface FilePanelProvider {
     }
 
     /**
+     * Optional per-provider function-key handler (e.g. F4 / Shift+F4).
+     */
+    default PanelFunctionKeyHandler functionKeyHandler() {
+        return PanelFunctionKeyHandler.NONE;
+    }
+
+    /**
      * Sort priority used when displaying roots from multiple providers.
      * Lower values appear first. Defaults to {@code 100}.
      */
