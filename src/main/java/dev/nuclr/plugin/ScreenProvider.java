@@ -18,6 +18,10 @@ public interface ScreenProvider {
 	/** Build or refresh the provider panel for the requested path. */
 	JComponent open(Path path) throws Exception;
 
+	/** Applies host theme before/after panel creation. */
+	default void applyTheme(PluginTheme theme) {
+	}
+
 	/** Called when screen is being closed/switched. */
 	default void close() {
 	}
