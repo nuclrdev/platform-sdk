@@ -8,7 +8,7 @@ import java.util.Map;
 import lombok.Data;
 
 @Data
-public abstract class PluginPathResource {
+public class PluginPathResource {
 
 	protected Map<String, String> metadata = new HashMap<>();
 
@@ -21,7 +21,15 @@ public abstract class PluginPathResource {
 	protected String extension;
 
 	protected String mimeType; // optional, can be null
+	
+	protected Path path; // optional
 
-	public abstract InputStream openStream() throws Exception;
+	public InputStream openStream() throws Exception {
+		if (path != null) {
+			return java.nio.file.Files.newInputStream(path);
+		} else {
+			throw new UnsupportedOperationException("Cannot open stream for PluginPathResource without a path");
+		}
+	}
 
 }

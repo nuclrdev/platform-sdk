@@ -3,7 +3,7 @@ package dev.nuclr.plugin;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public interface PanelProviderPlugin extends BasePlugin {
+public interface PanelProviderPlugin extends BasePlugin, FocusablePlugin {
 
 	List<PluginPathResource> getChangeDriveResources();
 

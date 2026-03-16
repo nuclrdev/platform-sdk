@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 
  * These are opened in a single shared view, and the plugin is responsible for closing the previous item/session when a new one is opened.	
  */
-public interface QuickViewProviderPlugin extends BasePlugin {
+public interface QuickViewProviderPlugin extends BasePlugin, FocusablePlugin {
 
 	/** Fast check; avoid heavy IO here. */
 	boolean supports(PluginPathResource resource);
