@@ -4,12 +4,16 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<name>Nuclr Commander Plugins SDK</name>
-	<url>https://nuclr.dev/</url>
 	<groupId>dev.nuclr</groupId>
 	<artifactId>plugins-sdk</artifactId>
 	<version>1.0.0</version>
+	<packaging>jar</packaging>
+	<description>Plugin development SDK for Nuclr Commander.</description>
+	<url>https://github.com/nuclrdev/plugins-sdk</url>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.release>21</maven.compiler.release>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
 	</properties>
@@ -17,10 +21,26 @@
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+
+	<developers>
+		<developer>
+			<id>nuclrdev</id>
+			<name>Nuclr</name>
+			<organization>Nuclr</organization>
+			<organizationUrl>https://nuclr.dev/</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:https://github.com/nuclrdev/plugins-sdk.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/nuclrdev/plugins-sdk.git</developerConnection>
+		<url>https://github.com/nuclrdev/plugins-sdk</url>
+		<tag>HEAD</tag>
+	</scm>
 
 	<dependencies>
 
@@ -46,5 +66,71 @@
 		</dependency>
 
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.3.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.8.0</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>3.2.8</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+						<configuration>
+							<gpgArguments>
+								<arg>--pinentry-mode</arg>
+								<arg>loopback</arg>
+							</gpgArguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.sonatype.central</groupId>
+				<artifactId>central-publishing-maven-plugin</artifactId>
+				<version>0.10.0</version>
+				<extensions>true</extensions>
+				<configuration>
+					<publishingServerId>central</publishingServerId>
+					<deploymentName>${project.artifactId}-${project.version}</deploymentName>
+					<autoPublish>true</autoPublish>
+					<waitUntil>published</waitUntil>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
