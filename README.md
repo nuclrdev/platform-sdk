@@ -9,33 +9,23 @@ This repository publishes the `dev.nuclr:platform-sdk` artifact used by Nuclr Co
 - Java 21+
 - Maven 3.9+
 
-## Build
-
-For a normal local build:
-
-```bash
-mvn -DskipTests compile
-```
-
-For a packaged build without GPG signing:
-
-```bash
-mvn -DskipTests -Dgpg.skip=true package
-```
-
-Publishing builds use GPG signing and the Sonatype Central publishing plugin configured in [pom.xml](/C:/nuclr/sources/platform-sdk/pom.xml).
-
 ## Maven Dependency
 
 Add the SDK to your plugin project:
 
 ```xml
+
 <dependency>
     <groupId>dev.nuclr</groupId>
     <artifactId>platform-sdk</artifactId>
     <version>2.0.1</version>
 </dependency>
+
 ```
+
+Find the latest version here:
+
+[https://central.sonatype.com/artifact/dev.nuclr/platform-sdk](https://central.sonatype.com/artifact/dev.nuclr/platform-sdk)
 
 ## What The SDK Provides
 
