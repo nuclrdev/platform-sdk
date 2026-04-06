@@ -83,7 +83,7 @@ public interface NuclrPlugin {
 	 * accordingly.
 	 */
 	void updateTheme(ThemeScheme themeScheme);
-	
+
 	/**
 	 * Return true if this plugin should only have one instance (e.g. a single
 	 * viewer for a file type). If false, multiple instances can be opened (e.g.
