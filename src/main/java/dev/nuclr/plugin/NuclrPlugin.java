@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.JComponent;
 
-import dev.nuclr.platform.ThemeScheme;
+import dev.nuclr.platform.NuclrThemeScheme;
 import dev.nuclr.platform.plugin.NuclrPluginContext;
 
 public interface NuclrPlugin {
@@ -89,7 +89,7 @@ public interface NuclrPlugin {
 	 * Called when the user changes the theme. Plugin should update its colors
 	 * accordingly.
 	 */
-	void updateTheme(ThemeScheme themeScheme);
+	void updateTheme(NuclrThemeScheme themeScheme);
 
 	/**
 	 * Return true if this plugin should only have one instance (e.g. a single

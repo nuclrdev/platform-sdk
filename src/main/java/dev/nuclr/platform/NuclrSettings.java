@@ -17,7 +17,7 @@
  */
 package dev.nuclr.platform;
 
-public interface Settings {
+public interface NuclrSettings {
 
 	void set(String namespace, String key, Object value);
 
