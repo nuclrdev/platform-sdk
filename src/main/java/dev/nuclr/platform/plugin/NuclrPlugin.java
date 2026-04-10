@@ -15,7 +15,7 @@
 	limitations under the License.
 
  */
-package dev.nuclr.plugin;
+package dev.nuclr.platform.plugin;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -23,7 +23,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JComponent;
 
 import dev.nuclr.platform.NuclrThemeScheme;
-import dev.nuclr.platform.plugin.NuclrPluginContext;
 
 public interface NuclrPlugin {
 
@@ -41,12 +40,13 @@ public interface NuclrPlugin {
 	void onFocusLost();
 	
 	boolean isFocused();
-
+	
 	String id();
 
 	String name();
 
-	int version();
+	/** Return a semver string (e.g. "1.0.0") */
+	String version();
 
 	String description();
 

@@ -15,7 +15,7 @@
 	limitations under the License.
 
  */
-package dev.nuclr.plugin;
+package dev.nuclr.platform.plugin;
 
 public abstract class NuclrMenuResource {
 
