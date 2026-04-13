@@ -9,6 +9,6 @@ package dev.nuclr.platform.plugin;
  * FullScreenViewer: A plugin that provides a full screen view of a file or data, typically for media files or documents. 
  * FullScreenEditor: A plugin that provides a full screen editor for creating or editing files, such as a text editor or image editor.
  */
-enum NuclrPluginRole {
+public enum NuclrPluginRole {
 	QuickViewer, FilePanel, FullScreenViewer, FullScreenEditor
 }
