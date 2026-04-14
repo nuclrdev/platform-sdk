@@ -24,8 +24,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class NuclrResourcePath {
 
 	protected Map<String, String> metadata = new HashMap<>();
@@ -42,22 +44,26 @@ public class NuclrResourcePath {
 
 	protected Path path; // optional
 
+	public NuclrResourcePath(Path path) {
+		this.path = path;
+	}
+
 	public String getExtension() {
 		return extension != null ? extension : path != null ? extensionFromPath() : "";
 	}
 
 	private String extensionFromPath() {
-		
+
 		if (path == null || path.getFileName() == null) {
 			return "";
 		}
-		
+
 		return path.getFileName().toString().contains(".")
 				? path.getFileName().toString().substring(path.getFileName().toString().lastIndexOf('.') + 1)
 				: "";
 	}
 
-	public InputStream openStream() throws IOException  {
+	public InputStream openStream() throws IOException {
 		if (path != null) {
 			return java.nio.file.Files.newInputStream(path);
 		} else {
