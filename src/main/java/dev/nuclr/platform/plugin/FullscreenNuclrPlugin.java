@@ -17,7 +17,11 @@
 */
 package dev.nuclr.platform.plugin;
 
-public non-sealed interface FullscreenNuclrPlugin extends BasePlugin {
+import java.util.List;
+
+import javax.swing.JComponent;
+
+public non-sealed interface FullscreenNuclrPlugin extends BaseNuclrPlugin {
 
 	/**
 	 * Return the plugin's role: viewer (read-only) or editor (can modify files).
@@ -31,4 +35,16 @@ public non-sealed interface FullscreenNuclrPlugin extends BasePlugin {
 	 */
 	Role role();
 
+	/** Return menu items for the given resource, or null/empty if none. */
+	default List<NuclrMenuResource> menuItems(NuclrResourcePath resource) {
+		return List.of();
+	}
+
+	@Override
+	default Type type() {
+		return Type.Fullscreen;
+	}
+
+	/** Return a component to display */
+	JComponent panel();
 }

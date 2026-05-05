@@ -21,12 +21,13 @@ import java.util.List;
 
 import lombok.Data;
 
-public non-sealed interface FilePanelNuclrPlugin extends BasePlugin {
+public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 
 	@Data
 	public static class PluginRoot {
 		private String text;
 		private Object object;
+		private String uuid;
 	}
 
 	/**
@@ -40,6 +41,11 @@ public non-sealed interface FilePanelNuclrPlugin extends BasePlugin {
 	/** Return menu items for the given resource, or null/empty if none. */
 	default List<NuclrMenuResource> menuItems(NuclrResourcePath resource) {
 		return List.of();
+	}
+	
+	@Override
+	default Type type() {
+		return Type.FilePanel;
 	}
 
 }

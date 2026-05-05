@@ -19,15 +19,16 @@ package dev.nuclr.platform.plugin;
 
 import javax.swing.JComponent;
 
-public non-sealed interface QuickViewNuclrPlugin extends BasePlugin {
+public non-sealed interface QuickViewNuclrPlugin extends BaseNuclrPlugin {
 
 	/** Return a component to display in the quick view panel. */
 	JComponent panel();
 
-	/** Return true if this provider can open the given resource. */
-	boolean supports(NuclrResourcePath resource);
-
 	/** lower priority providers are preferred when multiple match the same item */
 	int priority();
+
+	default Type type() {
+		return Type.QuickView;
+	}
 
 }

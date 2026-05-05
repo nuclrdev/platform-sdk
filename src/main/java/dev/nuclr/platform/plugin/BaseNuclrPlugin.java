@@ -20,12 +20,24 @@ package dev.nuclr.platform.plugin;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.nuclr.platform.NuclrThemeScheme;
+import dev.nuclr.platform.plugin.BaseNuclrPlugin.Type;
 
-public sealed interface BasePlugin permits QuickViewNuclrPlugin, FilePanelNuclrPlugin, FullscreenNuclrPlugin {
+public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelNuclrPlugin, FullscreenNuclrPlugin {
+
+	public static enum Type {
+		QuickView, FilePanel, Fullscreen
+	}
 
 	public static enum Developer {
 		Official, Community
 	}
+
+	/**
+	 * Return the type of this plugin. This is used to determine where the plugin
+	 * should be displayed in the UI (e.g. QuickView plugins are displayed in the
+	 * QuickView panel, FilePanel plugins are displayed in the file panel, etc.).
+	 */
+	Type type();
 
 	String id();
 
@@ -46,7 +58,12 @@ public sealed interface BasePlugin permits QuickViewNuclrPlugin, FilePanelNuclrP
 
 	String docUrl();
 
-	Developer type();
+	/**
+	 * Return the developer of this plugin. This is used to determine if the plugin
+	 * should be listed in the "Official" or "Community" sections of the plugin
+	 * manager.
+	 */
+	Developer developer();
 
 	/** Return true if the component accepts focus */
 	boolean onFocusGained();
@@ -88,7 +105,34 @@ public sealed interface BasePlugin permits QuickViewNuclrPlugin, FilePanelNuclrP
 	/** Open/refresh view for the item (do heavy work async, update UI on EDT). */
 	boolean openResource(NuclrResourcePath resource, AtomicBoolean cancelled);
 
+	/** Close the currently open item, if any. */
+	void closeResource();
+
 	/** Return the currently open item, or null if none. */
 	NuclrResourcePath getCurrentResource();
+
+	/** Return true if this provider can open the given resource. */
+	boolean supports(NuclrResourcePath resource);
+
+	/**
+	 * Return true if this plugin is of the given type. This is a convenience method
+	 * that can be used to check the plugin type without having to compare against
+	 * the enum value directly.
+	 */
+	default boolean is(Type type) {
+		return type() == type;
+	}
+
+	default FilePanelNuclrPlugin asFilePanel() {
+		return (FilePanelNuclrPlugin) this;
+	}
+
+	default QuickViewNuclrPlugin asQuickView() {
+		return (QuickViewNuclrPlugin) this;
+	}
+
+	default FullscreenNuclrPlugin asFullscreen() {
+		return (FullscreenNuclrPlugin) this;
+	}
 
 }
