@@ -26,7 +26,7 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 	@Data
 	public static class PluginRoot {
 		private String text;
-		private Object object;
+		private NuclrResourcePath path;
 		private String uuid;
 	}
 
