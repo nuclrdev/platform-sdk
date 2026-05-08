@@ -37,6 +37,9 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 	 * just: "GCP", etc.
 	 */
 	List<PluginRoot> getPluginRoots();
+	
+	/** Return list of child resources for the current resource. */
+	List<NuclrResourcePath> getChildrenForCurrentResource();
 
 	/** Return menu items for the given resource, or null/empty if none. */
 	default List<NuclrMenuResource> menuItems(NuclrResourcePath resource) {
