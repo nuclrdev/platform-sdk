@@ -29,13 +29,12 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 		private NuclrResourcePath path;
 		private String uuid;
 	}
-	
+
 	@Data
 	public static class PluginRoots {
 		private List<PluginRoot> roots = List.of();
 		private String title;
 	}
-
 
 	/**
 	 * Return list of identifiers that will be displayed in Commander on Alt + F1 /
@@ -44,7 +43,7 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 	 * just: "GCP", etc.
 	 */
 	PluginRoots getPluginRoots();
-	
+
 	/** Return list of child resources for the current resource. */
 	List<NuclrResourcePath> getChildrenForCurrentResource();
 
@@ -52,7 +51,24 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 	default List<NuclrMenuResource> menuItems(NuclrResourcePath resource) {
 		return List.of();
 	}
-	
+
+	/**
+	 * Return text to be displayed in the location bar for the current resource. For
+	 * example, for a local file system plugin, this could be the full path of the
+	 * current directory. For a git plugin, this could be the current branch and
+	 * path within the repository, etc.
+	 */
+	String getCurrentLocationDisplayText();
+
+	/**
+	 * Return text to be displayed in the selection summary bar for the given list
+	 * of selected resources. For example, for a local file system plugin, this
+	 * could be something like "3 items selected, 2.5 GB total". For a git plugin,
+	 * this could be something like "2 items selected, 1 modified, 1 untracked",
+	 * etc.
+	 */
+	String getSelectionSummaryText(List<NuclrResourcePath> selectedResources);
+
 	@Override
 	default Type type() {
 		return Type.FilePanel;
