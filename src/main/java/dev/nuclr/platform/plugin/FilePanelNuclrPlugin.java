@@ -43,7 +43,7 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 	 * "D:", etc. For a git plugin, this could be "Git", for a GCP plugin, this is
 	 * just: "GCP", etc.
 	 */
-	List<PluginRoot> getPluginRoots();
+	PluginRoots getPluginRoots();
 	
 	/** Return list of child resources for the current resource. */
 	List<NuclrResourcePath> getChildrenForCurrentResource();
