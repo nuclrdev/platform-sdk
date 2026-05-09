@@ -29,6 +29,13 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 		private NuclrResourcePath path;
 		private String uuid;
 	}
+	
+	@Data
+	public static class PluginRoots {
+		private List<PluginRoot> roots = List.of();
+		private String title;
+	}
+
 
 	/**
 	 * Return list of identifiers that will be displayed in Commander on Alt + F1 /

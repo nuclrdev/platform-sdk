@@ -1,5 +1,7 @@
 package dev.nuclr.platform.plugin;
 
+import java.util.Locale;
+
 import dev.nuclr.platform.NuclrSettings;
 import dev.nuclr.platform.NuclrThemeScheme;
 import dev.nuclr.platform.events.NuclrEventBus;
@@ -11,5 +13,7 @@ public interface NuclrPluginContext {
 	NuclrThemeScheme getTheme();
 
 	NuclrSettings getSettings();
+	
+	Locale getLocale();
 
 }
