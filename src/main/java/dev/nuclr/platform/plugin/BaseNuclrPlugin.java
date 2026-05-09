@@ -73,6 +73,12 @@ public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelN
 	boolean isFocused();
 
 	void preinit(NuclrPluginContext context);
+	
+	/** Return the plugin context, which provides access to various services and
+	 * resources that the plugin can use (e.g. event bus, theme manager, etc.). This
+	 * is guaranteed to be non-null after preinit is called.
+	 */
+	NuclrPluginContext getContext();
 
 	void init();
 
