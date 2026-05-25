@@ -30,21 +30,7 @@ public abstract class NuclrResource {
 
 	public abstract String getUuid();
 
-	/**
-	 * Return the resource name (filename or directory name) without any path
-	 * component. Used by the commander when creating this resource at a destination
-	 * during copy/move operations.
-	 */
 	public abstract String getName();
-
-	/**
-	 * Return the size of this resource in bytes, or {@code -1} if the size is
-	 * unknown (e.g. streams, virtual resources, or folders whose size has not been
-	 * computed). Used by the commander for progress reporting during transfers.
-	 */
-	public long getSize() {
-		return -1;
-	}
 
 	public InputStream openInputStream() {
 		throw new UnsupportedOperationException();
