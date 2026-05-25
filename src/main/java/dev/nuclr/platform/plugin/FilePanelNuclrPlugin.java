@@ -18,6 +18,7 @@
 package dev.nuclr.platform.plugin;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import lombok.Data;
 
@@ -26,7 +27,7 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 	@Data
 	public static class PluginRoot {
 		private String text;
-		private NuclrResourcePath path;
+		private NuclrResource path;
 		private String uuid;
 	}
 
@@ -35,6 +36,28 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 		private List<PluginRoot> roots = List.of();
 		private String title;
 	}
+	
+	@Data
+	public static class Entries {
+		private List<NuclrResource> entries = List.of();
+		private List<String> columnNames = List.of();
+		public String getValueAt(int rowIndex, int columnIndex) {
+			var entry = entries.get(rowIndex);
+			return entry.getColumnValue(columnIndex);
+		}
+
+	}
+	
+
+	/** 
+	 * Open/refresh view for the item (do heavy work async, update UI on EDT). 
+	 * And return list of children resources to be displayed in the file panel, or null/empty if the resource is not recognized by this plugin.
+	 * 
+	 * @param resource
+	 * @param cancelled
+	 * @return
+	 */
+	Entries openResource(NuclrResource resource, AtomicBoolean cancelled);
 
 	/**
 	 * Return list of identifiers that will be displayed in Commander on Alt + F1 /
@@ -44,11 +67,8 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 	 */
 	PluginRoots getPluginRoots();
 
-	/** Return list of child resources for the current resource. */
-	List<NuclrResourcePath> getChildrenForCurrentResource();
-
 	/** Return menu items for the given resource, or null/empty if none. */
-	default List<NuclrMenuResource> menuItems(NuclrResourcePath resource) {
+	default List<NuclrMenuResource> menuItems(NuclrResource resource) {
 		return List.of();
 	}
 
@@ -67,7 +87,7 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 	 * this could be something like "2 items selected, 1 modified, 1 untracked",
 	 * etc.
 	 */
-	String getSelectionSummaryText(List<NuclrResourcePath> selectedResources);
+	String getSelectionSummaryText(List<NuclrResource> selectedResources);
 
 	@Override
 	default Type type() {

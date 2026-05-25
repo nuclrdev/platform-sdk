@@ -17,10 +17,7 @@
 */
 package dev.nuclr.platform.plugin;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import dev.nuclr.platform.NuclrThemeScheme;
-import dev.nuclr.platform.plugin.BaseNuclrPlugin.Type;
 
 public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelNuclrPlugin, FullscreenNuclrPlugin {
 
@@ -108,17 +105,14 @@ public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelN
 	/** Plugin unload: release global resources. Provider will not be used again. */
 	void unload();
 
-	/** Open/refresh view for the item (do heavy work async, update UI on EDT). */
-	boolean openResource(NuclrResourcePath resource, AtomicBoolean cancelled);
-
 	/** Close the currently open item, if any. */
 	void closeResource();
 
 	/** Return the currently open item, or null if none. */
-	NuclrResourcePath getCurrentResource();
+	NuclrResource getCurrentResource();
 
 	/** Return true if this provider can open the given resource. */
-	boolean supports(NuclrResourcePath resource);
+	boolean supports(NuclrResource resource);
 
 	/**
 	 * Return true if this plugin is of the given type. This is a convenience method

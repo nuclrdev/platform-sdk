@@ -14,37 +14,38 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 
-*/
+ */
 package dev.nuclr.platform.plugin;
 
-import java.util.List;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.swing.JComponent;
+import lombok.Data;
 
-public non-sealed interface FullscreenNuclrPlugin extends BaseNuclrPlugin {
+@Data
+public abstract class NuclrResource {
 
-	/**
-	 * Return the plugin's role: viewer (read-only) or editor (can modify files).
-	 */
-	public static enum Role {
-		Viewer, Editor
+	protected Map<String, Object> metadata = new HashMap<>();
+
+	public abstract String getUuid();
+
+	public InputStream openInputStream() {
+		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * Return the plugin's role: viewer (read-only) or editor (can modify files).
-	 */
-	Role role();
+	public abstract boolean isFolder();
 
-	/** Return menu items for the given resource, or null/empty if none. */
-	default List<NuclrMenuResource> menuItems(NuclrResource resource) {
-		return List.of();
+	public abstract String getColumnValue(int columnIndex);
+
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof NuclrResource p && getUuid().equals(p.getUuid());
 	}
 
 	@Override
-	default Type type() {
-		return Type.Fullscreen;
+	public int hashCode() {
+		return getUuid().hashCode();
 	}
 
-	/** Return a component to display */
-	JComponent panel();
 }
