@@ -18,6 +18,7 @@
 package dev.nuclr.platform.plugin;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.JComponent;
 
@@ -47,4 +48,7 @@ public non-sealed interface FullscreenNuclrPlugin extends BaseNuclrPlugin {
 
 	/** Return a component to display */
 	JComponent panel();
+	
+	/** Open/refresh view for the item (do heavy work async, update UI on EDT). And return true if the resource is recognized by this plugin. */
+	boolean openResource(NuclrResource resource, AtomicBoolean cancelled);
 }
