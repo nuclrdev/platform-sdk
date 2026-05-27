@@ -14,27 +14,39 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 
- */
-package dev.nuclr.platform.events;
+*/
+package dev.nuclr.platform.plugin;
 
-import java.util.Map;
+public class DefaultNuclrPluginCallback implements NuclrPluginCallback {
 
-import dev.nuclr.platform.plugin.NuclrPluginCallback;
+	@Override
+	public void onStart(String description) {
+		// TODO Auto-generated method stub
 
-public interface NuclrEventBus {
+	}
 
-	void emit(Object source, String type, Map<String, Object> event);
-	
-	void emit(Object source, String type, Map<String, Object> event, NuclrPluginCallback callback);
+	@Override
+	public void onProgress(long current, long total) {
+		// TODO Auto-generated method stub
 
-	void emit(String type, Map<String, Object> event, NuclrPluginCallback callback);
+	}
 
-	void emit(String type, NuclrPluginCallback callback);
-	
-	void emit(String type);
+	@Override
+	public void onComplete() {
+		// TODO Auto-generated method stub
 
-	void subscribe(NuclrEventListener listener);
+	}
 
-	void unsubscribe(NuclrEventListener listener);
+	@Override
+	public void onError(String description, Exception e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean isCancelled() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

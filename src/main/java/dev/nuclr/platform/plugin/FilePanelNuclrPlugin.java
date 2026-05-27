@@ -22,30 +22,50 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import lombok.Data;
 
-public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
+public non-sealed interface FilePanelNuclrPlugin<T extends NuclrResource> 
+														extends BaseNuclrPlugin <T> {
 
 	@Data
-	public static class PluginRoot {
+	public static class PluginRootMenuItem <T extends NuclrResource> {
 		private String text;
-		private NuclrResource path;
+		private T path;
 		private String uuid;
 	}
 
 	@Data
-	public static class PluginRoots {
-		private List<PluginRoot> roots = List.of();
+	public static class PluginRootMenuItems <T extends NuclrResource> {
+		private List<PluginRootMenuItem<T>> roots = List.of();
 		private String title;
 	}
 	
 	@Data
-	public static class Entries {
-		private List<NuclrResource> entries = List.of();
+	public static class NuclrResourceData <T extends NuclrResource> {
+		
+		private List<T> entries = List.of();
+		
 		private List<String> columnNames = List.of();
+		
 		public String getValueAt(int rowIndex, int columnIndex) {
 			var entry = entries.get(rowIndex);
 			return entry.getColumnValue(columnIndex);
 		}
-
+		
+		public T getEntryAt(int rowIndex) {
+			return entries.get(rowIndex);
+		}
+		
+		public int getEntriesCount() {
+			return entries.size();
+		}
+		
+		public int getColumnCount() {
+			return columnNames.size();
+		}
+		
+		public String getColumnName(int columnIndex) {
+			return columnNames.get(columnIndex);
+		}
+		
 	}
 	
 
@@ -57,7 +77,7 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 	 * @param cancelled
 	 * @return
 	 */
-	Entries openResource(NuclrResource resource, AtomicBoolean cancelled);
+	NuclrResourceData<T> openResource(T resource, AtomicBoolean cancelled);
 
 	/**
 	 * Return list of identifiers that will be displayed in Commander on Alt + F1 /
@@ -65,10 +85,10 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 	 * "D:", etc. For a git plugin, this could be "Git", for a GCP plugin, this is
 	 * just: "GCP", etc.
 	 */
-	PluginRoots getPluginRoots();
+	PluginRootMenuItems<T> getPluginRootMenuItems();
 
 	/** Return menu items for the given resource, or null/empty if none. */
-	default List<NuclrMenuResource> menuItems(NuclrResource resource) {
+	default List<NuclrMenuResource> menuItems(T resource) {
 		return List.of();
 	}
 
@@ -87,7 +107,7 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 	 * this could be something like "2 items selected, 1 modified, 1 untracked",
 	 * etc.
 	 */
-	String getSelectionSummaryText(List<NuclrResource> selectedResources);
+	String getSelectionSummaryText(List<T> selectedResources);
 
 	@Override
 	default Type type() {

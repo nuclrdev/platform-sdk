@@ -18,6 +18,7 @@
 package dev.nuclr.platform.plugin;
 
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,13 +33,40 @@ public abstract class NuclrResource {
 
 	public abstract String getName();
 
+	public abstract String getFullPath();
+
+	public abstract LocalDate getLastModifiedDateTime();
+
+	public abstract boolean isFolder();
+
+	public abstract boolean isSystem();
+
+	public abstract boolean isHidden();
+
+	public abstract boolean isParent();
+	
+	public abstract boolean isLink();
+
 	public InputStream openInputStream() {
 		throw new UnsupportedOperationException();
 	}
 
-	public abstract boolean isFolder();
-
 	public abstract String getColumnValue(int columnIndex);
+
+	@SuppressWarnings("unchecked")
+	public <T> T getMetadata(String key, T defaultValue) {
+		Object value = metadata.get(key);
+
+		if (value == null) {
+			return defaultValue;
+		}
+
+		if (defaultValue != null && !defaultValue.getClass().isInstance(value)) {
+			return defaultValue;
+		}
+
+		return (T) value;
+	}
 
 	@Override
 	public boolean equals(Object o) {
