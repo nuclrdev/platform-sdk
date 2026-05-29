@@ -18,7 +18,7 @@
 package dev.nuclr.platform.plugin;
 
 import java.io.InputStream;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +35,11 @@ public abstract class NuclrResource {
 
 	public abstract String getFullPath();
 
-	public abstract LocalDate getLastModifiedDateTime();
+	public abstract LocalDateTime getCreateDateTime();
+
+	public abstract LocalDateTime getLastModifiedDateTime();
+
+	public abstract LocalDateTime getLastAccessDateTime();
 
 	public abstract boolean isFolder();
 

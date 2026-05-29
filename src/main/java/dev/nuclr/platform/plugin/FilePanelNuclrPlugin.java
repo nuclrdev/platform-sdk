@@ -18,6 +18,7 @@
 package dev.nuclr.platform.plugin;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -25,55 +26,60 @@ import java.util.function.Consumer;
 import lombok.Data;
 
 public non-sealed interface FilePanelNuclrPlugin<T extends NuclrResource> 
-														extends BaseNuclrPlugin <T> {
+		extends BaseNuclrPlugin<T> {
 
 	@Data
-	public static class PluginRootMenuItem <T extends NuclrResource> {
+	public static class MenuItem<T extends NuclrResource> {
 		private String text;
 		private T path;
 		private String uuid;
 	}
 
 	@Data
-	public static class PluginRootMenuItems <T extends NuclrResource> {
-		private List<PluginRootMenuItem<T>> roots = List.of();
+	public static class MenuItemsHolder<T extends NuclrResource> {
+		private List<MenuItem<T>> menuItems = List.of();
 		private String title;
+		
+		public List<MenuItem<T>> getMenuItems() {
+			return menuItems;
+		}
+		
 	}
-	
+
 	@Data
-	public static class NuclrResourceData <T extends NuclrResource> {
-		
-		private List<T> entries = List.of();
-		
-		private List<String> columnNames = List.of();
-		
+	public static class NuclrResourceData<T extends NuclrResource> {
+
+		private List<T> entries = new ArrayList<>();
+
+		private List<String> columnNames = new ArrayList<>();
+
 		public String getValueAt(int rowIndex, int columnIndex) {
 			var entry = entries.get(rowIndex);
 			return entry.getColumnValue(columnIndex);
 		}
-		
+
 		public T getEntryAt(int rowIndex) {
 			return entries.get(rowIndex);
 		}
-		
+
 		public int getEntriesCount() {
 			return entries.size();
 		}
-		
+
 		public int getColumnCount() {
 			return columnNames.size();
 		}
-		
+
 		public String getColumnName(int columnIndex) {
 			return columnNames.get(columnIndex);
 		}
-		
-	}
-	
 
-	/** 
-	 * Open/refresh view for the item (do heavy work async, update UI on EDT). 
-	 * And return list of children resources to be displayed in the file panel, or null/empty if the resource is not recognized by this plugin.
+	}
+
+	/**
+	 * Open/refresh view for the item (do heavy work async, update UI on EDT). And
+	 * return list of children resources to be displayed in the file panel, or
+	 * null/empty if the resource is not recognized by this plugin.
 	 * 
 	 * @param resource
 	 * @param cancelled
@@ -87,7 +93,7 @@ public non-sealed interface FilePanelNuclrPlugin<T extends NuclrResource>
 	 * "D:", etc. For a git plugin, this could be "Git", for a GCP plugin, this is
 	 * just: "GCP", etc.
 	 */
-	PluginRootMenuItems<T> getPluginRootMenuItems();
+	MenuItemsHolder<T> getPluginMenuItems();
 
 	/** Return menu items for the given resource, or null/empty if none. */
 	default List<NuclrMenuResource> menuItems(T resource) {
@@ -112,9 +118,9 @@ public non-sealed interface FilePanelNuclrPlugin<T extends NuclrResource>
 	String getSelectionSummaryText(List<T> selectedResources);
 
 	/**
-	 * Recursively walk all descendants of the given resource, invoking the
-	 * visitor for each. Heavy/slow transport work; honor the cancelled flag.
-	 * Used e.g. by the quick-folder-size plugin to sum sizes lazily.
+	 * Recursively walk all descendants of the given resource, invoking the visitor
+	 * for each. Heavy/slow transport work; honor the cancelled flag. Used e.g. by
+	 * the quick-folder-size plugin to sum sizes lazily.
 	 */
 	default void walkDescendants(T resource, Consumer<T> visitor, AtomicBoolean cancelled, boolean recursive)
 			throws IOException {
