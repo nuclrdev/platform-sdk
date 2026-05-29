@@ -46,7 +46,9 @@ public abstract class NuclrResource {
 	public abstract boolean isParent();
 	
 	public abstract boolean isLink();
-
+	
+	public abstract long getLength();
+	
 	public InputStream openInputStream() {
 		throw new UnsupportedOperationException();
 	}

@@ -17,8 +17,10 @@
  */
 package dev.nuclr.platform.plugin;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import lombok.Data;
 
@@ -108,6 +110,16 @@ public non-sealed interface FilePanelNuclrPlugin<T extends NuclrResource>
 	 * etc.
 	 */
 	String getSelectionSummaryText(List<T> selectedResources);
+
+	/**
+	 * Recursively walk all descendants of the given resource, invoking the
+	 * visitor for each. Heavy/slow transport work; honor the cancelled flag.
+	 * Used e.g. by the quick-folder-size plugin to sum sizes lazily.
+	 */
+	default void walkDescendants(T resource, Consumer<T> visitor, AtomicBoolean cancelled, boolean recursive)
+			throws IOException {
+		throw new IOException("walkDescendants not implemented for this plugin");
+	}
 
 	@Override
 	default Type type() {

@@ -18,9 +18,8 @@
 package dev.nuclr.platform.plugin;
 
 import dev.nuclr.platform.NuclrThemeScheme;
-import dev.nuclr.platform.events.NuclrEventListener;
 
-public sealed interface BaseNuclrPlugin <T extends NuclrResource> extends NuclrEventListener permits QuickViewNuclrPlugin, FilePanelNuclrPlugin, FullscreenNuclrPlugin {
+public sealed interface BaseNuclrPlugin <T extends NuclrResource> permits QuickViewNuclrPlugin, FilePanelNuclrPlugin, FullscreenNuclrPlugin {
 
 	public static enum Type {
 		QuickView, FilePanel, Fullscreen
