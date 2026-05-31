@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.JComponent;
 
-public non-sealed interface QuickViewNuclrPlugin <R extends NuclrResource> extends BaseNuclrPlugin<R> {
+public non-sealed interface QuickViewNuclrPlugin extends BaseNuclrPlugin {
 
 	/** Return a component to display in the quick view panel. */
 	JComponent panel();
@@ -34,6 +34,6 @@ public non-sealed interface QuickViewNuclrPlugin <R extends NuclrResource> exten
 	}
 	
 	/** Open/refresh view for the item (do heavy work async, update UI on EDT). And return true if the resource is recognized by this plugin. */
-	boolean openResource(R resource, AtomicBoolean cancelled);
+	boolean openResource(NuclrResource resource, AtomicBoolean cancelled);
 
 }

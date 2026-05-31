@@ -25,31 +25,30 @@ import java.util.function.Consumer;
 
 import lombok.Data;
 
-public non-sealed interface FilePanelNuclrPlugin<T extends NuclrResource> 
-		extends BaseNuclrPlugin<T> {
+public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 
 	@Data
-	public static class MenuItem<T extends NuclrResource> {
+	public static class MenuItem {
 		private String text;
-		private T path;
+		private NuclrResource path;
 		private String uuid;
 	}
 
 	@Data
-	public static class MenuItemsHolder<T extends NuclrResource> {
-		private List<MenuItem<T>> menuItems = List.of();
+	public static class MenuItemsHolder {
+		private List<MenuItem> menuItems = List.of();
 		private String title;
 		
-		public List<MenuItem<T>> getMenuItems() {
+		public List<MenuItem> getMenuItems() {
 			return menuItems;
 		}
 		
 	}
 
 	@Data
-	public static class NuclrResourceData<T extends NuclrResource> {
+	public static class NuclrResourceData {
 
-		private List<T> entries = new ArrayList<>();
+		private List<NuclrResource> entries = new ArrayList<>();
 
 		private List<String> columnNames = new ArrayList<>();
 
@@ -58,7 +57,7 @@ public non-sealed interface FilePanelNuclrPlugin<T extends NuclrResource>
 			return entry.getColumnValue(columnIndex);
 		}
 
-		public T getEntryAt(int rowIndex) {
+		public NuclrResource getEntryAt(int rowIndex) {
 			return entries.get(rowIndex);
 		}
 
@@ -85,7 +84,7 @@ public non-sealed interface FilePanelNuclrPlugin<T extends NuclrResource>
 	 * @param cancelled
 	 * @return
 	 */
-	NuclrResourceData<T> openResource(T resource, AtomicBoolean cancelled);
+	NuclrResourceData openResource(NuclrResource resource, AtomicBoolean cancelled);
 
 	/**
 	 * Return list of identifiers that will be displayed in Commander on Alt + F1 /
@@ -93,10 +92,12 @@ public non-sealed interface FilePanelNuclrPlugin<T extends NuclrResource>
 	 * "D:", etc. For a git plugin, this could be "Git", for a GCP plugin, this is
 	 * just: "GCP", etc.
 	 */
-	MenuItemsHolder<T> getPluginMenuItems();
+	default MenuItemsHolder getPluginMenuItems() {
+		return null;
+	}
 
 	/** Return menu items for the given resource, or null/empty if none. */
-	default List<NuclrMenuResource> menuItems(T resource) {
+	default List<NuclrMenuResource> menuItems(NuclrResource resource) {
 		return List.of();
 	}
 
@@ -115,14 +116,14 @@ public non-sealed interface FilePanelNuclrPlugin<T extends NuclrResource>
 	 * this could be something like "2 items selected, 1 modified, 1 untracked",
 	 * etc.
 	 */
-	String getSelectionSummaryText(List<T> selectedResources);
+	String getSelectionSummaryText(List<NuclrResource> selectedResources);
 
 	/**
 	 * Recursively walk all descendants of the given resource, invoking the visitor
 	 * for each. Heavy/slow transport work; honor the cancelled flag. Used e.g. by
 	 * the quick-folder-size plugin to sum sizes lazily.
 	 */
-	default void walkDescendants(T resource, Consumer<T> visitor, AtomicBoolean cancelled, boolean recursive)
+	default void walkDescendants(NuclrResource resource, Consumer<NuclrResource> visitor, AtomicBoolean cancelled, boolean recursive)
 			throws IOException {
 		throw new IOException("walkDescendants not implemented for this plugin");
 	}

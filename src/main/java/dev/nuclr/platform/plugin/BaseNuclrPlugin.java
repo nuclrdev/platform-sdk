@@ -19,7 +19,7 @@ package dev.nuclr.platform.plugin;
 
 import dev.nuclr.platform.NuclrThemeScheme;
 
-public sealed interface BaseNuclrPlugin <T extends NuclrResource> permits QuickViewNuclrPlugin, FilePanelNuclrPlugin, FullscreenNuclrPlugin {
+public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelNuclrPlugin, FullscreenNuclrPlugin {
 
 	public static enum Type {
 		QuickView, FilePanel, Fullscreen
@@ -109,10 +109,10 @@ public sealed interface BaseNuclrPlugin <T extends NuclrResource> permits QuickV
 	void closeResource();
 
 	/** Return the currently open item, or null if none. */
-	T getCurrentResource();
+	NuclrResource getCurrentResource();
 
 	/** Return true if this provider can open the given resource. */
-	boolean supports(T resource);
+	boolean supports(NuclrResource resource);
 
 	/**
 	 * Return true if this plugin is of the given type. This is a convenience method
@@ -123,8 +123,8 @@ public sealed interface BaseNuclrPlugin <T extends NuclrResource> permits QuickV
 		return type() == type;
 	}
 
-	default FilePanelNuclrPlugin<T> asFilePanel() {
-		return (FilePanelNuclrPlugin<T>) this;
+	default FilePanelNuclrPlugin asFilePanel() {
+		return (FilePanelNuclrPlugin) this;
 	}
 
 	default QuickViewNuclrPlugin asQuickView() {

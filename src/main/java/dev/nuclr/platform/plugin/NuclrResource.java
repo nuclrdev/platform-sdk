@@ -19,45 +19,51 @@ package dev.nuclr.platform.plugin;
 
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import lombok.Data;
 
 @Data
-public abstract class NuclrResource {
+public final class NuclrResource {
 
 	protected Map<String, Object> metadata = new HashMap<>();
-
-	public abstract String getUuid();
-
-	public abstract String getName();
-
-	public abstract String getFullPath();
-
-	public abstract LocalDateTime getCreateDateTime();
-
-	public abstract LocalDateTime getLastModifiedDateTime();
-
-	public abstract LocalDateTime getLastAccessDateTime();
-
-	public abstract boolean isFolder();
-
-	public abstract boolean isSystem();
-
-	public abstract boolean isHidden();
-
-	public abstract boolean isParent();
 	
-	public abstract boolean isLink();
+	protected List<String> columnValues = new ArrayList<>();
 	
-	public abstract long getLength();
+	private String uuid;
+
+	private String name;
+
+	private String fullPath;
+
+	private LocalDateTime createdDateTime;
+
+	private LocalDateTime lastModifiedDateTime;
+
+	private LocalDateTime lastAccessDateTime;
+
+	private boolean folder;
+
+	private boolean system;
+
+	private boolean hidden;
+
+	private boolean parent;
+	
+	private boolean link;
+	
+	private long length;
 	
 	public InputStream openInputStream() {
 		throw new UnsupportedOperationException();
 	}
 
-	public abstract String getColumnValue(int columnIndex);
+	public String getColumnValue(int columnIndex) {
+		return columnValues.get(columnIndex).toString();
+	}
 
 	@SuppressWarnings("unchecked")
 	public <T> T getMetadata(String key, T defaultValue) {
