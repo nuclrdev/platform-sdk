@@ -90,4 +90,9 @@ public final class NuclrResource {
 		return getUuid().hashCode();
 	}
 
+	@Override
+	public String toString() {
+		return "NuclrResource [uuid=" + uuid + ", fullPath=" + fullPath + "]";
+	}
+	
 }
