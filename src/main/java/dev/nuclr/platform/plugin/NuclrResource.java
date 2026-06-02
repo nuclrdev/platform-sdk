@@ -62,6 +62,12 @@ public final class NuclrResource implements java.io.Serializable {
 	
 	private NuclrResource parentResource;
 	
+	public NuclrResource(Path path, NuclrResource parentResource) {
+		super();
+		this.path = path;
+		this.parentResource = parentResource;
+	}
+	
 	public InputStream openInputStream() {
 		throw new UnsupportedOperationException();
 	}
