@@ -28,7 +28,7 @@ import java.util.Map;
 import lombok.Data;
 
 @Data
-public final class NuclrResource {
+public final class NuclrResource implements java.io.Serializable {
 
 	protected Map<String, Object> metadata = new HashMap<>();
 	
@@ -59,6 +59,8 @@ public final class NuclrResource {
 	private long length;
 	
 	private Path path;
+	
+	private NuclrResource parentResource;
 	
 	public InputStream openInputStream() {
 		throw new UnsupportedOperationException();
