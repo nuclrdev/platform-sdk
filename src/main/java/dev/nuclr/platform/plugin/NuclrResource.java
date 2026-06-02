@@ -18,6 +18,7 @@
 package dev.nuclr.platform.plugin;
 
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,6 +57,8 @@ public final class NuclrResource {
 	private boolean link;
 	
 	private long length;
+	
+	private Path path;
 	
 	public InputStream openInputStream() {
 		throw new UnsupportedOperationException();
