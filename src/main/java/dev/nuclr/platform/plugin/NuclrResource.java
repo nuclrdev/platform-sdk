@@ -18,6 +18,7 @@
 package dev.nuclr.platform.plugin;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ import java.util.Map;
 import lombok.Data;
 
 @Data
-public final class NuclrResource implements java.io.Serializable {
+public final class NuclrResource implements Serializable {
 
 	protected Map<String, Object> metadata = new HashMap<>();
 	
@@ -52,20 +53,15 @@ public final class NuclrResource implements java.io.Serializable {
 
 	private boolean hidden;
 
-	private boolean parent;
-	
 	private boolean link;
 	
 	private long length;
 	
 	private Path path;
 	
-	private NuclrResource parentResource;
-	
-	public NuclrResource(Path path, NuclrResource parentResource) {
+	public NuclrResource(Path path) {
 		super();
 		this.path = path;
-		this.parentResource = parentResource;
 	}
 	
 	public InputStream openInputStream() {

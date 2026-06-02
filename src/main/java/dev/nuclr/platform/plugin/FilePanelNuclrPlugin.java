@@ -84,7 +84,7 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 	 * @param cancelled
 	 * @return
 	 */
-	NuclrResourceData openResource(NuclrResource parentResource, NuclrResource resourceToOpen, AtomicBoolean cancelled);
+	NuclrResourceData openResource(NuclrResource resourceToOpen, AtomicBoolean cancelled);
 
 	/**
 	 * Return list of identifiers that will be displayed in Commander on Alt + F1 /
