@@ -17,6 +17,8 @@
 */
 package dev.nuclr.platform.plugin;
 
+import java.nio.file.Path;
+
 import dev.nuclr.platform.NuclrThemeScheme;
 
 public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelNuclrPlugin, FullscreenNuclrPlugin {
@@ -112,7 +114,7 @@ public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelN
 	NuclrResource getCurrentResource();
 
 	/** Return true if this provider can open the given resource. */
-	boolean supports(NuclrResource resource);
+	boolean supports(Path path);
 
 	/**
 	 * Return true if this plugin is of the given type. This is a convenience method

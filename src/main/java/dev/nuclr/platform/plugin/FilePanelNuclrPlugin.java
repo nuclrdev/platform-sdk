@@ -52,11 +52,6 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 
 		private List<String> columnNames = new ArrayList<>();
 
-		public String getValueAt(int rowIndex, int columnIndex) {
-			var entry = entries.get(rowIndex);
-			return entry.getColumnValue(columnIndex);
-		}
-
 		public NuclrResource getEntryAt(int rowIndex) {
 			return entries.get(rowIndex);
 		}

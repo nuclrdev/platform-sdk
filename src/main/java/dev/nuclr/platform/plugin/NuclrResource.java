@@ -19,57 +19,50 @@ package dev.nuclr.platform.plugin;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import lombok.Data;
 
 @Data
-public final class NuclrResource implements Serializable {
+public abstract class NuclrResource implements Serializable {
 
 	protected Map<String, Object> metadata = new HashMap<>();
-	
-	protected List<String> columnValues = new ArrayList<>();
-	
-	private String uuid;
 
-	private String name;
+	protected String uuid;
 
-	private String fullPath;
+	protected String name;
 
-	private LocalDateTime createdDateTime;
+	protected String fullPath;
 
-	private LocalDateTime lastModifiedDateTime;
+	protected LocalDateTime createdDateTime;
 
-	private LocalDateTime lastAccessDateTime;
+	protected LocalDateTime lastModifiedDateTime;
 
-	private boolean folder;
+	protected LocalDateTime lastAccessDateTime;
 
-	private boolean system;
+	protected boolean folder;
 
-	private boolean hidden;
+	protected boolean system;
 
-	private boolean link;
-	
-	private long length;
-	
-	private Path path;
-	
+	protected boolean hidden;
+
+	protected boolean link;
+
+	protected long length;
+
+	protected Path path;
+
 	public NuclrResource(Path path) {
 		super();
 		this.path = path;
 	}
-	
-	public InputStream openInputStream() {
-		throw new UnsupportedOperationException();
-	}
 
-	public String getColumnValue(int columnIndex) {
-		return columnValues.get(columnIndex).toString();
+	public InputStream openInputStream(OpenOption... options) throws Exception {
+		throw new UnsupportedOperationException();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -101,5 +94,5 @@ public final class NuclrResource implements Serializable {
 	public String toString() {
 		return "NuclrResource [uuid=" + uuid + ", fullPath=" + fullPath + "]";
 	}
-	
+
 }
