@@ -56,6 +56,15 @@ public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelN
 	String pageUrl();
 
 	String docUrl();
+	
+	/** Return the title to display in the plugin's window (e.g. the title of the
+	 * tab for a file panel plugin). This can be dynamic based on the currently
+	 * open resource (e.g. include the file name), but should not include any
+	 * state that would change frequently (e.g. "Modified" status).
+	 */
+	default String getWindowTitle() {
+		return null;
+	}
 
 	/**
 	 * Return the developer of this plugin. This is used to determine if the plugin
