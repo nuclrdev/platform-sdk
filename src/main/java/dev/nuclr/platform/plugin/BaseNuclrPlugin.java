@@ -18,6 +18,8 @@
 package dev.nuclr.platform.plugin;
 
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 
 import dev.nuclr.platform.NuclrThemeScheme;
 
@@ -145,5 +147,30 @@ public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelN
 	default FullscreenNuclrPlugin asFullscreen() {
 		return (FullscreenNuclrPlugin) this;
 	}
-
+	
+	/** Perform an action on this plugin. This is called when the user clicks a button
+	 * or menu item that is associated with this plugin. The action type and event
+	 * data are determined by the specific UI element that was clicked, and the
+	 * plugin can use this information to perform the appropriate action.
+	 *
+	 * @param other             the other plugin involved in this action, if any (e.g.
+	 *                          the source plugin for a file panel action); may be
+	 *                          null if not applicable
+	 * @param actionType        a string identifier for the type of action to perform
+	 * @param selectedResources the list of currently selected resources in the UI;
+	 *                          may be empty if no resources are selected
+	 * @param data		       additional data about the event that triggered this
+	 *                          action; keys and value types are contract of the
+	 *                          specific UI element that was clicked
+	 * @param callback          progress and cancellation bridge provided by the commander;
+	 *                          call {@link NuclrPluginCallback#isCancelled()} regularly and
+	 *                          abort cleanly when it returns {@code true}
+	 */
+	void act(
+		BaseNuclrPlugin other, 
+		String actionType,
+		List<NuclrResource> selectedResources,
+		NuclrResource focusedResource,
+		Map<String, Object> data, 
+		NuclrPluginCallback callback);
 }
