@@ -148,6 +148,32 @@ public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelN
 		return (FullscreenNuclrPlugin) this;
 	}
 	
+	/**
+	 * Return the context-menu entries to show when the user right-clicks an entry
+	 * (or a multi-selection) in this plugin's panel. Return an empty list (the
+	 * default) to suppress the menu entirely.
+	 *
+	 * <p>This is a pure, fast query &mdash; it is called on the live plugin instance
+	 * on the EDT each time the menu is about to pop up, so do not perform blocking
+	 * I/O here. Decide entries from the supplied resources alone. When the user
+	 * chooses an item, Commander dispatches it through {@link #act} using the item's
+	 * {@link NuclrContextMenuItem} actionType; that is where the
+	 * (possibly slow, cancellable) work belongs.
+	 *
+	 * @param focusedResource   the entry under the cursor / with focus; may be
+	 *                          {@code null} if the click was on empty panel space
+	 * @param selectedResources all currently selected resources; never {@code null},
+	 *                          may be empty. For a single right-click this is
+	 *                          typically the one focused resource.
+	 * @return ordered list of menu items (supports separators and submenus); never
+	 *         {@code null}
+	 */
+	default List<NuclrContextMenuItem> contextMenuItems(
+			NuclrResource focusedResource,
+			List<NuclrResource> selectedResources) {
+		return List.of();
+	}
+
 	/** Perform an action on this plugin. This is called when the user clicks a button
 	 * or menu item that is associated with this plugin. The action type and event
 	 * data are determined by the specific UI element that was clicked, and the
@@ -174,5 +200,5 @@ public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelN
 		Map<String, Object> data, 
 		NuclrPluginCallback callback) {
 		// default implementation does nothing, plugins can override if needed
-	}
+	}
 }
