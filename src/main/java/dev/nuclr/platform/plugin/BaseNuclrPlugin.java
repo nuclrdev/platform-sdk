@@ -166,11 +166,13 @@ public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelN
 	 *                          call {@link NuclrPluginCallback#isCancelled()} regularly and
 	 *                          abort cleanly when it returns {@code true}
 	 */
-	void act(
+	default void act(
 		BaseNuclrPlugin other, 
 		String actionType,
 		List<NuclrResource> selectedResources,
 		NuclrResource focusedResource,
 		Map<String, Object> data, 
-		NuclrPluginCallback callback);
+		NuclrPluginCallback callback) {
+		// default implementation does nothing, plugins can override if needed
+	}
 }
