@@ -51,6 +51,8 @@ public abstract class NuclrResource implements Serializable {
 	protected boolean hidden;
 
 	protected boolean link;
+	
+	protected boolean readable = true;
 
 	protected long length;
 
