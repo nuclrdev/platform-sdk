@@ -23,127 +23,263 @@ import java.util.Map;
 
 import dev.nuclr.platform.NuclrThemeScheme;
 
+/**
+ * Root interface for all Nuclr plugins. Sealed to exactly three permitted
+ * subtypes: {@link QuickViewNuclrPlugin}, {@link FilePanelNuclrPlugin}, and
+ * {@link FullscreenNuclrPlugin}.
+ *
+ * <p>Plugin lifecycle (in call order):
+ * <ol>
+ *   <li>{@link #preinit(NuclrPluginContext)} — receive platform services</li>
+ *   <li>{@link #init()} — setup; context is available</li>
+ *   <li>{@code openResource(NuclrResource, AtomicBoolean)} — called repeatedly; must be async</li>
+ *   <li>{@link #updateTheme(NuclrThemeScheme)} — optional</li>
+ *   <li>{@link #unload()} — cleanup on shutdown</li>
+ * </ol>
+ */
 public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelNuclrPlugin, FullscreenNuclrPlugin {
 
+	/** Identifies the UI slot a plugin occupies. */
 	public static enum Type {
-		QuickView, FilePanel, Fullscreen
+		/** Plugin renders in the quick-view side panel. */
+		QuickView,
+		/** Plugin renders in one of the two file-browser panes. */
+		FilePanel,
+		/** Plugin takes over the full commander window. */
+		Fullscreen
 	}
 
+	/** Indicates whether a plugin is maintained by the Nuclr team or the community. */
 	public static enum Developer {
-		Official, Community
+		/** Published and maintained by the Nuclr team. */
+		Official,
+		/** Published by a third-party contributor. */
+		Community
 	}
 
 	/**
-	 * Return the type of this plugin. This is used to determine where the plugin
-	 * should be displayed in the UI (e.g. QuickView plugins are displayed in the
-	 * QuickView panel, FilePanel plugins are displayed in the file panel, etc.).
+	 * Return the type of this plugin, which determines the UI slot it occupies.
+	 *
+	 * @return the plugin type, never {@code null}
 	 */
 	Type type();
 
+	/**
+	 * Return the unique plugin identifier (e.g. {@code "com.example.myplugin"}).
+	 *
+	 * @return plugin id, never {@code null}
+	 */
 	String id();
 
+	/**
+	 * Return the human-readable plugin name shown in the plugin manager.
+	 *
+	 * @return plugin display name, never {@code null}
+	 */
 	String name();
 
-	/** Return a semver string (e.g. "1.0.0") */
+	/**
+	 * Return the semver version string (e.g. {@code "1.0.0"}).
+	 *
+	 * @return version string, never {@code null}
+	 */
 	String version();
 
+	/**
+	 * Return a short description of what the plugin does.
+	 *
+	 * @return plugin description, never {@code null}
+	 */
 	String description();
 
+	/**
+	 * Return the name of the plugin author.
+	 *
+	 * @return author name, never {@code null}
+	 */
 	String author();
 
+	/**
+	 * Return the SPDX license identifier for this plugin (e.g. {@code "Apache-2.0"}).
+	 *
+	 * @return license identifier, never {@code null}
+	 */
 	String license();
 
+	/**
+	 * Return the URL of the plugin's home page.
+	 *
+	 * @return website URL, or {@code null} if not set
+	 */
 	String website();
 
+	/**
+	 * Return the URL of the plugin's marketplace/listing page.
+	 *
+	 * @return marketplace page URL, or {@code null} if not set
+	 */
 	String pageUrl();
 
+	/**
+	 * Return the URL of the plugin's documentation.
+	 *
+	 * @return documentation URL, or {@code null} if not set
+	 */
 	String docUrl();
-	
-	/** Return the title to display in the plugin's window (e.g. the title of the
-	 * tab for a file panel plugin). This can be dynamic based on the currently
-	 * open resource (e.g. include the file name), but should not include any
-	 * state that would change frequently (e.g. "Modified" status).
+
+	/**
+	 * Return the title to display in the plugin's window (e.g. the tab title for a
+	 * file-panel plugin). May include the current file name but should not include
+	 * frequently changing state such as a "Modified" indicator.
+	 *
+	 * @return window/tab title, or {@code null} to use the plugin name
 	 */
 	default String getWindowTitle() {
 		return null;
 	}
 
 	/**
-	 * Return the developer of this plugin. This is used to determine if the plugin
-	 * should be listed in the "Official" or "Community" sections of the plugin
-	 * manager.
+	 * Return whether this plugin is published by the Nuclr team or a community
+	 * contributor.
+	 *
+	 * @return developer category, never {@code null}
 	 */
 	Developer developer();
 
-	/** Return true if the component accepts focus */
+	/**
+	 * Attempt to give focus to the plugin's UI component.
+	 *
+	 * @return {@code true} if the component accepted focus
+	 */
 	boolean onFocusGained();
 
+	/**
+	 * Notify the plugin that it has lost focus so it can update its visual state.
+	 */
 	void onFocusLost();
 
+	/**
+	 * Return {@code true} if the plugin's UI component currently holds focus.
+	 *
+	 * @return {@code true} if focused
+	 */
 	boolean isFocused();
 
+	/**
+	 * Called before {@link #init()}. Provides the plugin with the platform context
+	 * it needs to access services such as the event bus and settings store.
+	 *
+	 * @param context the platform context; store it for later use in {@link #init()}
+	 */
 	void preinit(NuclrPluginContext context);
-	
-	/** Return the plugin context, which provides access to various services and
-	 * resources that the plugin can use (e.g. event bus, theme manager, etc.). This
-	 * is guaranteed to be non-null after preinit is called.
+
+	/**
+	 * Return the plugin context received during {@link #preinit}. Guaranteed to be
+	 * non-null after {@code preinit} has been called.
+	 *
+	 * @return the plugin context, never {@code null} after preinit
 	 */
 	NuclrPluginContext getContext();
 
+	/**
+	 * Initialise the plugin. Called after {@link #preinit}; the context is
+	 * available and may be used safely here.
+	 */
 	void init();
 
 	/**
-	 * Called when the user changes the theme. Plugin should update its colors
-	 * accordingly.
+	 * Called when the user changes the UI theme. The plugin should update its
+	 * colours and fonts accordingly.
+	 *
+	 * @param themeScheme the new theme palette
 	 */
 	default void updateTheme(NuclrThemeScheme themeScheme) {
 		// default implementation does nothing, plugins can override if needed
 	}
 
 	/**
-	 * Return true if this plugin should only have one instance (e.g. a single
-	 * viewer for a file type). If false, multiple instances can be opened (e.g.
-	 * multiple viewers for the same file type).
+	 * Return {@code true} if at most one instance of this plugin may exist at a
+	 * time. Return {@code false} for plugins that support multiple simultaneous
+	 * instances (each must then return a distinct {@link #uuid()}).
+	 *
+	 * @return {@code true} by default
 	 */
 	default boolean singleton() {
 		return true;
 	}
 
 	/**
-	 * This is the unique identifier for this plugin instanceFor non-singleton
-	 * plugins, this should return a unique value (e.g. a random UUID).
+	 * Return the unique identifier for this plugin instance. For singleton plugins
+	 * this is typically a fixed constant; for multi-instance plugins it must be a
+	 * freshly generated UUID per instance.
+	 *
+	 * @return instance UUID, never {@code null}
 	 */
 	String uuid();
 
-	/** Plugin unload: release global resources. Provider will not be used again. */
+	/**
+	 * Release all global resources held by this plugin. The plugin will not be
+	 * used again after this call.
+	 */
 	void unload();
 
-	/** Close the currently open item, if any. */
+	/**
+	 * Close the currently open resource, if any.
+	 */
 	void closeResource();
 
-	/** Return the currently open item, or null if none. */
+	/**
+	 * Return the resource currently open in this plugin, or {@code null} if none.
+	 *
+	 * @return current resource, or {@code null}
+	 */
 	NuclrResource getCurrentResource();
 
-	/** Return true if this provider can open the given resource. */
+	/**
+	 * Return {@code true} if this plugin can open the given resource.
+	 *
+	 * @param resource the resource to check
+	 * @return {@code true} if this plugin supports the given resource
+	 */
 	boolean supports(NuclrResource resource);
 
 	/**
-	 * Return true if this plugin is of the given type. This is a convenience method
-	 * that can be used to check the plugin type without having to compare against
-	 * the enum value directly.
+	 * Return {@code true} if this plugin is of the given type. Convenience
+	 * alternative to comparing {@link #type()} with the enum constant directly.
+	 *
+	 * @param type the type to test against
+	 * @return {@code true} if {@link #type()} equals {@code type}
 	 */
 	default boolean is(Type type) {
 		return type() == type;
 	}
 
+	/**
+	 * Cast this plugin to {@link FilePanelNuclrPlugin}.
+	 *
+	 * @return this plugin as a {@link FilePanelNuclrPlugin}
+	 * @throws ClassCastException if this plugin is not a file-panel plugin
+	 */
 	default FilePanelNuclrPlugin asFilePanel() {
 		return (FilePanelNuclrPlugin) this;
 	}
 
+	/**
+	 * Cast this plugin to {@link QuickViewNuclrPlugin}.
+	 *
+	 * @return this plugin as a {@link QuickViewNuclrPlugin}
+	 * @throws ClassCastException if this plugin is not a quick-view plugin
+	 */
 	default QuickViewNuclrPlugin asQuickView() {
 		return (QuickViewNuclrPlugin) this;
 	}
 
+	/**
+	 * Cast this plugin to {@link FullscreenNuclrPlugin}.
+	 *
+	 * @return this plugin as a {@link FullscreenNuclrPlugin}
+	 * @throws ClassCastException if this plugin is not a fullscreen plugin
+	 */
 	default FullscreenNuclrPlugin asFullscreen() {
 		return (FullscreenNuclrPlugin) this;
 	}
@@ -174,23 +310,23 @@ public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelN
 		return List.of();
 	}
 
-	/** Perform an action on this plugin. This is called when the user clicks a button
-	 * or menu item that is associated with this plugin. The action type and event
-	 * data are determined by the specific UI element that was clicked, and the
-	 * plugin can use this information to perform the appropriate action.
+	/**
+	 * Perform an action on this plugin. Called when the user activates a button or
+	 * context-menu item associated with this plugin. The action type and payload
+	 * are determined by the UI element that was activated.
 	 *
-	 * @param other             the other plugin involved in this action, if any (e.g.
-	 *                          the source plugin for a file panel action); may be
-	 *                          null if not applicable
-	 * @param actionType        a string identifier for the type of action to perform
-	 * @param selectedResources the list of currently selected resources in the UI;
-	 *                          may be empty if no resources are selected
-	 * @param data		       additional data about the event that triggered this
-	 *                          action; keys and value types are contract of the
-	 *                          specific UI element that was clicked
-	 * @param callback          progress and cancellation bridge provided by the commander;
-	 *                          call {@link NuclrPluginCallback#isCancelled()} regularly and
-	 *                          abort cleanly when it returns {@code true}
+	 * @param other             the other plugin involved in this action, if any
+	 *                          (e.g. the source file-panel for a copy action);
+	 *                          {@code null} if not applicable
+	 * @param actionType        string identifier of the action to perform
+	 * @param selectedResources all currently selected resources; may be empty
+	 * @param focusedResource   the resource under the cursor / with focus;
+	 *                          may be {@code null}
+	 * @param data              additional event data; keys and value types are
+	 *                          contract of the specific UI element
+	 * @param callback          progress and cancellation bridge; call
+	 *                          {@link NuclrPluginCallback#isCancelled()} regularly
+	 *                          and abort cleanly when it returns {@code true}
 	 */
 	default void act(
 		BaseNuclrPlugin other, 

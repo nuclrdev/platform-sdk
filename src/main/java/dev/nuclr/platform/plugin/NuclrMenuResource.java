@@ -19,17 +19,26 @@ package dev.nuclr.platform.plugin;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
+/**
+ * A single entry in a plugin's bottom-bar function-key menu (e.g. F5=Copy,
+ * F6=Move). The commander renders these entries as clickable labels that
+ * emit the associated {@link #eventType} on the event bus when activated.
+ */
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class NuclrMenuResource {
 
+	/** Label shown in the function-key bar. */
 	private String name;
 
+	/** Function key label (e.g. {@code "F5"}, {@code "F6"}). */
 	private String functionKey;
 
+	/** Event type emitted on the bus when this entry is activated. */
 	private String eventType;
+
+	/** Creates a {@code NuclrMenuResource} with all fields set to {@code null}. */
+	public NuclrMenuResource() {}
 
 }

@@ -21,19 +21,44 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.JComponent;
 
+/**
+ * Plugin type that renders a preview of a resource in the quick-view side
+ * panel. Multiple plugins may be registered; the one with the lowest
+ * {@link #priority()} that {@link #supports} the resource is chosen.
+ */
 public non-sealed interface QuickViewNuclrPlugin extends BaseNuclrPlugin {
 
-	/** Return a component to display in the quick view panel. */
+	/**
+	 * Return the Swing component that displays the preview.
+	 *
+	 * @return the plugin's root UI component, never {@code null}
+	 */
 	JComponent panel();
 
-	/** lower priority providers are preferred when multiple match the same item */
+	/**
+	 * Return the selection priority for this provider. When multiple plugins
+	 * support the same resource, the one with the <em>lowest</em> priority
+	 * value is preferred.
+	 *
+	 * @return priority value; lower means higher preference
+	 */
 	int priority();
 
+	/** {@inheritDoc} */
 	default Type type() {
 		return Type.QuickView;
 	}
-	
-	/** Open/refresh view for the item (do heavy work async, update UI on EDT). And return true if the resource is recognized by this plugin. */
+
+	/**
+	 * Open or refresh the preview for the given resource. Heavy work must be
+	 * done asynchronously; UI updates must be dispatched to the EDT.
+	 *
+	 * @param resource  the resource to preview
+	 * @param cancelled flag set to {@code true} by the commander when the user
+	 *                  cancels; check regularly and abort cleanly
+	 * @return {@code true} if the resource was recognised and the preview was
+	 *         started
+	 */
 	boolean openResource(NuclrResource resource, AtomicBoolean cancelled);
 
 }

@@ -17,35 +17,31 @@
 */
 package dev.nuclr.platform.plugin;
 
+/**
+ * No-op implementation of {@link NuclrPluginCallback} intended for use in
+ * tests or as a placeholder where progress reporting is not needed. All
+ * callback methods are empty; {@link #isCancelled()} always returns
+ * {@code false}.
+ */
 public class DefaultNuclrPluginCallback implements NuclrPluginCallback {
 
-	@Override
-	public void onStart(String description) {
-		// TODO Auto-generated method stub
-
-	}
+	/** Creates a new {@code DefaultNuclrPluginCallback}. */
+	public DefaultNuclrPluginCallback() {}
 
 	@Override
-	public void onProgress(long current, long total) {
-		// TODO Auto-generated method stub
-
-	}
+	public void onStart(String description) {}
 
 	@Override
-	public void onComplete() {
-		// TODO Auto-generated method stub
-
-	}
+	public void onProgress(long current, long total) {}
 
 	@Override
-	public void onError(String description, Exception e) {
-		// TODO Auto-generated method stub
+	public void onComplete() {}
 
-	}
+	@Override
+	public void onError(String description, Exception e) {}
 
 	@Override
 	public boolean isCancelled() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

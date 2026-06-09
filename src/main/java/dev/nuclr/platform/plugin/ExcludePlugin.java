@@ -17,6 +17,13 @@
 */
 package dev.nuclr.platform.plugin;
 
+/**
+ * Marks a plugin class to be skipped during automatic plugin discovery.
+ *
+ * <p>Apply this annotation to abstract base classes or test implementations
+ * that should not be registered as active plugins by the commander's plugin
+ * loader.
+ */
 public @interface ExcludePlugin {
 
 }

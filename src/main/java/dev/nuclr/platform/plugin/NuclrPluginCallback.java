@@ -30,7 +30,7 @@ package dev.nuclr.platform.plugin;
  * dispatches UI updates to the EDT internally. Plugins do not need to switch
  * threads before calling these methods.
  *
- * <h3>Typical usage inside handleMessage</h3>
+ * <h2>Typical usage inside handleMessage</h2>
  * <pre>{@code
  * public void handleMessage(Object source, String type,
  *                           Map<String, Object> event,
@@ -80,6 +80,8 @@ public interface NuclrPluginCallback {
 	/**
 	 * Return {@code true} if the user pressed Cancel. Plugins must check this
 	 * regularly and stop processing as soon as possible.
+	 *
+	 * @return {@code true} if the operation has been cancelled
 	 */
 	boolean isCancelled();
 

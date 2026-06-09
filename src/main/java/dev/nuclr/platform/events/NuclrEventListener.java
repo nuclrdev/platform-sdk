@@ -21,6 +21,12 @@ import java.util.Map;
 
 import dev.nuclr.platform.plugin.NuclrPluginCallback;
 
+/**
+ * Listener that receives events emitted on the {@link NuclrEventBus}.
+ *
+ * <p>Register/unregister via {@link NuclrEventBus#subscribe} /
+ * {@link NuclrEventBus#unsubscribe}.
+ */
 public interface NuclrEventListener {
 
 	/**
@@ -34,21 +40,23 @@ public interface NuclrEventListener {
 	 * <p>Only called when {@link #isMessageSupported(String)} returns
 	 * {@code true} for the given {@code type}.
 	 *
-	 * @param source   the object that emitted the event, or {@code null}
-	 * @param type     the event type string (see e.g.
-	 *                 {@link dev.nuclr.platform.plugin.NuclrFileOperationEvent})
-	 * @param event    the event payload; keys and value types are contract of
-	 *                 the specific event type
-	 * @param callback progress and cancellation bridge provided by the commander;
-	 *                 call {@link NuclrPluginCallback#isCancelled()} regularly and
-	 *                 abort cleanly when it returns {@code true}
+	 * @param source    the object that emitted the event, or {@code null}
+	 * @param type      the event type string
+	 * @param eventData the event payload; keys and value types are contract of
+	 *                  the specific event type
+	 * @param callback  progress and cancellation bridge provided by the commander;
+	 *                  call {@link NuclrPluginCallback#isCancelled()} regularly and
+	 *                  abort cleanly when it returns {@code true}
 	 */
 	void handleMessage(Object source, String type, Map<String, Object> eventData, NuclrPluginCallback callback);
 
 	/**
-	 * Return {@code true} if this listener handles events of the given
-	 * {@code type}. The commander calls this before emitting an event to decide
-	 * whether to enable the corresponding UI action.
+	 * Return {@code true} if this listener handles events of the given type.
+	 * The commander calls this before emitting an event to decide whether to
+	 * enable the corresponding UI action.
+	 *
+	 * @param type the event type string to check
+	 * @return {@code true} if this listener can handle events of the given type
 	 */
 	boolean isMessageSupported(String type);
 

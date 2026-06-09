@@ -29,7 +29,7 @@ import lombok.Singular;
  * {@link BaseNuclrPlugin#contextMenuItems}.
  *
  * <p>When the user clicks the entry, Commander dispatches through
- * {@link BaseNuclrPlugin#act} with {@link #getActionType()} as the
+ * {@link BaseNuclrPlugin#act} with {@link #actionType} as the
  * {@code actionType}, the panel's current selection as {@code selectedResources}
  * and the right-clicked entry as {@code focusedResource}. The plugin therefore
  * needs no extra callback wiring &mdash; it just handles the action type in
@@ -93,11 +93,21 @@ public class NuclrContextMenuItem {
 	@Singular
 	private List<NuclrContextMenuItem> children;
 
-	/** Convenience factory for a divider line. */
+	/**
+	 * Convenience factory for a divider line.
+	 *
+	 * @return a new separator item
+	 */
 	public static NuclrContextMenuItem separator() {
 		return NuclrContextMenuItem.builder().separator(true).build();
 	}
 
+	/**
+	 * Return {@code true} if this item has nested children (i.e. renders as a
+	 * submenu).
+	 *
+	 * @return {@code true} when {@link #children} is non-null and non-empty
+	 */
 	public boolean hasChildren() {
 		return children != null && !children.isEmpty();
 	}

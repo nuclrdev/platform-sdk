@@ -40,20 +40,40 @@ public class NuclrThemeScheme {
 
 	private Map<String, String> uiDefaults = new HashMap<>();
 
+	/** Creates a {@code NuclrThemeScheme} with an empty palette and "Unnamed" as its name. */
 	public NuclrThemeScheme() {
 		name = name != null && !name.isBlank() ? name : "Unnamed";
 		uiDefaults = uiDefaults != null ? Map.copyOf(uiDefaults) : Map.of();
 	}
-	
+
+	/**
+	 * Creates a {@code NuclrThemeScheme} with the given name and palette.
+	 *
+	 * @param name       display name for this theme; defaults to "Unnamed" if blank
+	 * @param uiDefaults map of UIManager keys to CSS hex color strings; may be
+	 *                   {@code null} (treated as empty)
+	 */
 	public NuclrThemeScheme(String name, Map<String, String> uiDefaults) {
 		this.name = name != null && !name.isBlank() ? name : "Unnamed";
 		this.uiDefaults = uiDefaults != null ? Map.copyOf(uiDefaults) : Map.of();
 	}
 
+	/**
+	 * Look up a color from this theme's palette.
+	 *
+	 * @param string       UIManager key (e.g. {@code "Panel.background"})
+	 * @param defaultColor fallback when the key is not in the palette
+	 * @return the palette color for the key, or {@code defaultColor}
+	 */
 	public Color color(String string, Color defaultColor) {
 		return uiDefaults.containsKey(string) ? Color.decode(uiDefaults.get(string)) : defaultColor;
 	}
 
+	/**
+	 * Return the default UI font from the current Look-and-Feel.
+	 *
+	 * @return the default font, or {@code null} if not set by the L&amp;F
+	 */
 	public Font defaultFont() {
 		return UIManager.getFont("defaultFont");
 	}

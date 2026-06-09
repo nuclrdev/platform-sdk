@@ -22,21 +22,35 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.JComponent;
 
+/**
+ * Plugin type that occupies the full commander window, used for viewers and
+ * editors.
+ */
 public non-sealed interface FullscreenNuclrPlugin extends BaseNuclrPlugin {
 
 	/**
-	 * Return the plugin's role: viewer (read-only) or editor (can modify files).
+	 * Indicates whether the plugin presents a read-only view or can modify files.
 	 */
 	public static enum Role {
-		Viewer, Editor
+		/** The plugin only displays the resource without modification. */
+		Viewer,
+		/** The plugin can modify the resource. */
+		Editor
 	}
 
 	/**
 	 * Return the plugin's role: viewer (read-only) or editor (can modify files).
+	 *
+	 * @return the role of this plugin
 	 */
 	Role role();
 
-	/** Return menu items for the given resource, or null/empty if none. */
+	/**
+	 * Return context-menu items for the given resource, or an empty list if none.
+	 *
+	 * @param resource the resource being right-clicked
+	 * @return ordered list of menu items, never {@code null}
+	 */
 	default List<NuclrMenuResource> menuItems(NuclrResource resource) {
 		return List.of();
 	}
@@ -46,9 +60,21 @@ public non-sealed interface FullscreenNuclrPlugin extends BaseNuclrPlugin {
 		return Type.Fullscreen;
 	}
 
-	/** Return a component to display */
+	/**
+	 * Return the Swing component that displays the plugin's UI.
+	 *
+	 * @return the plugin's root UI component, never {@code null}
+	 */
 	JComponent panel();
-	
-	/** Open/refresh view for the item (do heavy work async, update UI on EDT). And return true if the resource is recognized by this plugin. */
+
+	/**
+	 * Open or refresh the view for the given resource. Heavy work must be done
+	 * asynchronously; UI updates must be dispatched to the EDT.
+	 *
+	 * @param resource  the resource to open
+	 * @param cancelled flag set to {@code true} by the commander when the user
+	 *                  cancels; check regularly and abort cleanly
+	 * @return {@code true} if the resource was recognised and opened by this plugin
+	 */
 	boolean openResource(NuclrResource resource, AtomicBoolean cancelled);
 }
