@@ -6,7 +6,7 @@
 	<name>Nuclr Commander Plugins SDK</name>
 	<groupId>dev.nuclr</groupId>
 	<artifactId>platform-sdk</artifactId>
-	<version>3.0.0</version>
+	<version>3.0.1</version>
 	<packaging>jar</packaging>
 	<description>Plugin development SDK for Nuclr Commander.</description>
 	<url>https://github.com/nuclrdev/plugins-sdk</url>

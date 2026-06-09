@@ -21,3 +21,4 @@ deploy.bat
 maven-central-deploy.bat
 install.bat
 /.claude
+c.bat
