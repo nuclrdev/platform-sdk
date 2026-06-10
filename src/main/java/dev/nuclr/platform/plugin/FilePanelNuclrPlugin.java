@@ -139,6 +139,64 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 	NuclrResourceData openResource(NuclrResource resourceToOpen, AtomicBoolean cancelled);
 
 	/**
+	 * Receives directory entries as they are discovered, so the commander can paint
+	 * a folder incrementally instead of waiting for the whole listing to complete.
+	 *
+	 * <p>Implementations of {@link FilePanelNuclrPlugin} push to this sink from
+	 * {@link FilePanelNuclrPlugin#openResource(NuclrResource, AtomicBoolean, EntrySink)};
+	 * the commander supplies the sink and marshals every call onto the event
+	 * dispatch thread.
+	 */
+	interface EntrySink {
+
+		/**
+		 * Declare the column headers for the listing. Call once, before any
+		 * {@link #add(NuclrResource)}.
+		 *
+		 * @param columnNames ordered column labels
+		 */
+		void columns(List<String> columnNames);
+
+		/**
+		 * Publish a single entry for immediate display.
+		 *
+		 * @param entry the freshly discovered resource
+		 */
+		void add(NuclrResource entry);
+	}
+
+	/**
+	 * Streaming variant of {@link #openResource(NuclrResource, AtomicBoolean)}:
+	 * entries are pushed to {@code sink} as they are discovered so the panel can
+	 * render them progressively. The returned {@link NuclrResourceData} is still the
+	 * complete listing, used by the commander for final sorting and cursor
+	 * placement.
+	 *
+	 * <p>The default implementation simply calls the blocking
+	 * {@link #openResource(NuclrResource, AtomicBoolean)} and replays its result
+	 * into the sink, so plugins that do not override it keep working (their entries
+	 * just appear in a single batch when the read completes).
+	 *
+	 * @param resourceToOpen the resource to open or navigate to
+	 * @param cancelled      flag set to {@code true} by the commander when the user
+	 *                       cancels; check regularly and abort cleanly
+	 * @param sink           receives column definitions and entries as they are
+	 *                       discovered; may be {@code null}
+	 * @return the complete resource data for the panel, or {@code null} if the
+	 *         resource is not handled by this plugin
+	 */
+	default NuclrResourceData openResource(NuclrResource resourceToOpen, AtomicBoolean cancelled, EntrySink sink) {
+		NuclrResourceData data = openResource(resourceToOpen, cancelled);
+		if (data != null && sink != null) {
+			sink.columns(data.getColumnNames());
+			for (NuclrResource entry : data.getEntries()) {
+				sink.add(entry);
+			}
+		}
+		return data;
+	}
+
+	/**
 	 * Return the list of identifiers displayed in Commander on Alt+F1 / Alt+F2.
 	 * For a local file system plugin these could be "C:", "D:", etc. For a Git
 	 * plugin this could be "Git". Return {@code null} to suppress the menu.
