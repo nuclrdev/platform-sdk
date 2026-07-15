@@ -235,6 +235,37 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 	String getSelectionSummaryText(List<NuclrResource> selectedResources);
 
 	/**
+	 * Open an interactive shell rooted at the panel's current location, to be
+	 * rendered in the commander's embedded console (Ctrl+O).
+	 *
+	 * <p>Return {@code null} — the default — and the commander opens its own
+	 * local OS shell instead, exactly as it does today. Plugins that browse the
+	 * local filesystem want precisely that and need not implement this method;
+	 * plugins that browse somewhere a local shell cannot reach (a server over
+	 * SSH, a container, a remote bucket) return a session that speaks to that
+	 * place, so Ctrl+O lands the user where the panel already is.
+	 *
+	 * <p>Called off the event dispatch thread and allowed to block: connecting,
+	 * authenticating and prompting the user for credentials are all fair game
+	 * here. Throw {@link IOException} when a shell was intended but could not be
+	 * started — the commander then opens no console at all, on the assumption
+	 * the plugin has already told the user what went wrong. That is the
+	 * difference between the two "no session" outcomes: {@code null} means "I
+	 * have no shell to offer here, use the local one", an exception means "mine
+	 * failed".
+	 *
+	 * @param cwd     the resource the panel is currently showing; the shell
+	 *                should start here
+	 * @param columns the terminal's initial width in character cells
+	 * @param rows    the terminal's initial height in character cells
+	 * @return the shell session, or {@code null} to fall back to a local shell
+	 * @throws IOException if this plugin's shell could not be started
+	 */
+	default NuclrTerminalSession openTerminal(NuclrResource cwd, int columns, int rows) throws IOException {
+		return null;
+	}
+
+	/**
 	 * Recursively walk all descendants of the given resource, invoking the visitor
 	 * for each. Heavy/slow transport work; honor the cancelled flag. Used e.g. by
 	 * the quick-folder-size plugin to sum sizes lazily.
