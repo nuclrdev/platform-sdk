@@ -238,6 +238,13 @@ public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelN
 	/**
 	 * Return {@code true} if this plugin can open the given resource.
 	 *
+	 * <p>
+	 * The host may call this method from a background thread because capability
+	 * detection can involve blocking filesystem or network access. Implementations
+	 * must therefore be thread-safe, must not assume Swing's event-dispatch thread,
+	 * and must not display modal UI. User-facing errors belong to the subsequent
+	 * open operation or to the host after capability detection completes.
+	 *
 	 * @param resource the resource to check
 	 * @return {@code true} if this plugin supports the given resource
 	 */

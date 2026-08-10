@@ -29,6 +29,11 @@ import lombok.Data;
  * Plugin type that provides a filesystem or resource browser pane (drives, S3,
  * Git, etc.). The commander displays two instances of this type side-by-side in
  * its dual-pane layout.
+ *
+ * <p>
+ * In particular, the inherited {@link #supports(NuclrResource)} capability probe
+ * may be called from a background thread and must follow that method's
+ * thread-safety and no-modal-UI contract.
  */
 public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 
