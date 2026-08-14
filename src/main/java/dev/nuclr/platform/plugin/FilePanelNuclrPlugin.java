@@ -287,9 +287,4 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 		throw new IOException("walkDescendants not implemented for this plugin");
 	}
 
-	@Override
-	default Type type() {
-		return Type.FilePanel;
-	}
-
 }

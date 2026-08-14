@@ -39,13 +39,6 @@ public non-sealed interface FullscreenNuclrPlugin extends BaseNuclrPlugin {
 	}
 
 	/**
-	 * Return the plugin's role: viewer (read-only) or editor (can modify files).
-	 *
-	 * @return the role of this plugin
-	 */
-	Role role();
-
-	/**
 	 * Return context-menu items for the given resource, or an empty list if none.
 	 *
 	 * @param resource the resource being right-clicked
@@ -53,11 +46,6 @@ public non-sealed interface FullscreenNuclrPlugin extends BaseNuclrPlugin {
 	 */
 	default List<NuclrMenuResource> menuItems(NuclrResource resource) {
 		return List.of();
-	}
-
-	@Override
-	default Type type() {
-		return Type.Fullscreen;
 	}
 
 	/**

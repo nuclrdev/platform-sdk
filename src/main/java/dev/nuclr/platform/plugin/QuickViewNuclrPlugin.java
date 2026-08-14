@@ -23,8 +23,9 @@ import javax.swing.JComponent;
 
 /**
  * Plugin type that renders a preview of a resource in the quick-view side
- * panel. Multiple plugins may be registered; the one with the lowest
- * {@link #priority()} that {@link #supports} the resource is chosen.
+ * panel. Multiple plugins may be registered; among those whose
+ * {@link #supports} accepts the resource, the one with the lowest
+ * {@code priority} declared in {@code plugin.json} is chosen.
  */
 public non-sealed interface QuickViewNuclrPlugin extends BaseNuclrPlugin {
 
@@ -34,20 +35,6 @@ public non-sealed interface QuickViewNuclrPlugin extends BaseNuclrPlugin {
 	 * @return the plugin's root UI component, never {@code null}
 	 */
 	JComponent panel();
-
-	/**
-	 * Return the selection priority for this provider. When multiple plugins
-	 * support the same resource, the one with the <em>lowest</em> priority
-	 * value is preferred.
-	 *
-	 * @return priority value; lower means higher preference
-	 */
-	int priority();
-
-	/** {@inheritDoc} */
-	default Type type() {
-		return Type.QuickView;
-	}
 
 	/**
 	 * Open or refresh the preview for the given resource. Heavy work must be

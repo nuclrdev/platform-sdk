@@ -58,93 +58,16 @@ public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelN
 	}
 
 	/**
-	 * Return the type of this plugin, which determines the UI slot it occupies.
-	 *
-	 * @return the plugin type, never {@code null}
-	 */
-	Type type();
-
-	/**
-	 * Return the unique plugin identifier (e.g. {@code "com.example.myplugin"}).
-	 *
-	 * @return plugin id, never {@code null}
-	 */
-	String id();
-
-	/**
-	 * Return the human-readable plugin name shown in the plugin manager.
-	 *
-	 * @return plugin display name, never {@code null}
-	 */
-	String name();
-
-	/**
-	 * Return the semver version string (e.g. {@code "1.0.0"}).
-	 *
-	 * @return version string, never {@code null}
-	 */
-	String version();
-
-	/**
-	 * Return a short description of what the plugin does.
-	 *
-	 * @return plugin description, never {@code null}
-	 */
-	String description();
-
-	/**
-	 * Return the name of the plugin author.
-	 *
-	 * @return author name, never {@code null}
-	 */
-	String author();
-
-	/**
-	 * Return the SPDX license identifier for this plugin (e.g. {@code "Apache-2.0"}).
-	 *
-	 * @return license identifier, never {@code null}
-	 */
-	String license();
-
-	/**
-	 * Return the URL of the plugin's home page.
-	 *
-	 * @return website URL, or {@code null} if not set
-	 */
-	String website();
-
-	/**
-	 * Return the URL of the plugin's marketplace/listing page.
-	 *
-	 * @return marketplace page URL, or {@code null} if not set
-	 */
-	String pageUrl();
-
-	/**
-	 * Return the URL of the plugin's documentation.
-	 *
-	 * @return documentation URL, or {@code null} if not set
-	 */
-	String docUrl();
-
-	/**
 	 * Return the title to display in the plugin's window (e.g. the tab title for a
 	 * file-panel plugin). May include the current file name but should not include
 	 * frequently changing state such as a "Modified" indicator.
 	 *
-	 * @return window/tab title, or {@code null} to use the plugin name
+	 * @return window/tab title, or {@code null} to use the name declared in
+	 *         {@code plugin.json}
 	 */
 	default String getWindowTitle() {
 		return null;
 	}
-
-	/**
-	 * Return whether this plugin is published by the Nuclr team or a community
-	 * contributor.
-	 *
-	 * @return developer category, never {@code null}
-	 */
-	Developer developer();
 
 	/**
 	 * Attempt to give focus to the plugin's UI component.
@@ -198,17 +121,6 @@ public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelN
 	}
 
 	/**
-	 * Return {@code true} if at most one instance of this plugin may exist at a
-	 * time. Return {@code false} for plugins that support multiple simultaneous
-	 * instances (each must then return a distinct {@link #uuid()}).
-	 *
-	 * @return {@code true} by default
-	 */
-	default boolean singleton() {
-		return true;
-	}
-
-	/**
 	 * Return the unique identifier for this plugin instance. For singleton plugins
 	 * this is typically a fixed constant; for multi-instance plugins it must be a
 	 * freshly generated UUID per instance.
@@ -249,17 +161,6 @@ public sealed interface BaseNuclrPlugin permits QuickViewNuclrPlugin, FilePanelN
 	 * @return {@code true} if this plugin supports the given resource
 	 */
 	boolean supports(NuclrResource resource);
-
-	/**
-	 * Return {@code true} if this plugin is of the given type. Convenience
-	 * alternative to comparing {@link #type()} with the enum constant directly.
-	 *
-	 * @param type the type to test against
-	 * @return {@code true} if {@link #type()} equals {@code type}
-	 */
-	default boolean is(Type type) {
-		return type() == type;
-	}
 
 	/**
 	 * Cast this plugin to {@link FilePanelNuclrPlugin}.
