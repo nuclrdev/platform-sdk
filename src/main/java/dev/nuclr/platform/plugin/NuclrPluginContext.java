@@ -2,6 +2,7 @@ package dev.nuclr.platform.plugin;
 
 import java.util.Locale;
 
+import dev.nuclr.platform.NuclrCredentialStore;
 import dev.nuclr.platform.NuclrSettings;
 import dev.nuclr.platform.NuclrThemeScheme;
 import dev.nuclr.platform.events.NuclrEventBus;
@@ -12,6 +13,14 @@ import dev.nuclr.platform.events.NuclrEventBus;
  * {@code preinit} has completed.
  */
 public interface NuclrPluginContext {
+
+	/**
+	 * Returns the host-owned credential store for this plugin's stable ID.
+	 * Obtaining the store does not access or unlock the OS keyring.
+	 * @return the store, never {@code null}
+	 * @since 5.0.0
+	 */
+	NuclrCredentialStore getCredentialStore();
 
 	/**
 	 * Return the application-wide event bus.
