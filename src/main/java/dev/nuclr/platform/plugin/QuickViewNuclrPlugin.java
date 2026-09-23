@@ -17,6 +17,7 @@
  */
 package dev.nuclr.platform.plugin;
 
+import java.awt.image.BufferedImage;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.JComponent;
@@ -47,5 +48,45 @@ public non-sealed interface QuickViewNuclrPlugin extends BaseNuclrPlugin {
 	 *         started
 	 */
 	boolean openResource(NuclrResource resource, AtomicBoolean cancelled);
+
+	/**
+	 * Whether this plugin can draw still thumbnails through
+	 * {@link #thumbnail(NuclrResource, int, int, AtomicBoolean)}.
+	 *
+	 * <p>Declared separately so a caller can skip instantiating a heavy viewer
+	 * only to be handed {@code null}. A plugin that overrides {@code thumbnail}
+	 * must override this too.
+	 *
+	 * @return {@code true} if thumbnails are supported; {@code false} by default
+	 */
+	default boolean supportsThumbnails() {
+		return false;
+	}
+
+	/**
+	 * Draw a still thumbnail of a resource - the first page, the cover, a frame -
+	 * for a caller that wants a picture rather than a live panel, such as a chip
+	 * beside a file name.
+	 *
+	 * <p>This is a separate, stateless path: it must not touch {@link #panel()},
+	 * must not disturb the resource currently open, and may be called on any
+	 * thread, concurrently, and before {@link #init()} has run. Implementations
+	 * that cannot honour that should leave this alone.
+	 *
+	 * <p>Returning {@code null} means only that no picture was produced, for any
+	 * reason; the caller is expected to fall back to an icon rather than treat it
+	 * as an error.
+	 *
+	 * @param resource  the resource to draw
+	 * @param maxWidth  the widest the result may be, in pixels
+	 * @param maxHeight the tallest the result may be, in pixels
+	 * @param cancelled flag set to {@code true} by the caller when the thumbnail
+	 *                  is no longer wanted; check regularly and abort cleanly
+	 * @return the thumbnail, no larger than the given box and preserving the
+	 *         resource's aspect ratio, or {@code null} when none could be drawn
+	 */
+	default BufferedImage thumbnail(NuclrResource resource, int maxWidth, int maxHeight, AtomicBoolean cancelled) {
+		return null;
+	}
 
 }
