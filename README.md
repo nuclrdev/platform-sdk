@@ -19,7 +19,7 @@ Add the SDK to your plugin project. Use `provided` scope — the host applicatio
 <dependency>
     <groupId>dev.nuclr</groupId>
     <artifactId>platform-sdk</artifactId>
-    <version>4.0.0</version>
+    <version>6.0.0</version>
     <scope>provided</scope>
 </dependency>
 ```
@@ -27,6 +27,25 @@ Add the SDK to your plugin project. Use `provided` scope — the host applicatio
 Find the latest version here:
 
 https://central.sonatype.com/artifact/dev.nuclr/platform-sdk
+
+Commander skips a bundle whose manifest asks for a newer `platformSdkVersion` than the one it ships with, so declare the oldest SDK version that has everything your plugin calls.
+
+## What's new 🆕
+
+### 6.0.0 — quick-view thumbnails
+
+`QuickViewNuclrPlugin` gains two methods for drawing a still picture of a resource, for callers that want a thumbnail rather than a live panel — an attachment chip, say:
+
+- `supportsThumbnails()` — whether the plugin can draw one; `false` by default
+- `thumbnail(NuclrResource, int maxWidth, int maxHeight, AtomicBoolean cancelled)` — returns a `BufferedImage` no larger than the box and keeping the resource's aspect ratio, or `null` when none could be drawn; `null` by default
+
+Both are default methods, so existing viewers compile and run unchanged. See [Thumbnails](#thumbnails-) for the contract.
+
+### 5.0.0 — credential store
+
+`NuclrPluginContext.getCredentialStore()` returns a `NuclrCredentialStore` backed by the operating system's secure storage and scoped to the plugin's stable id: `get(key)`, `set(key, secret)` and `delete(key)`. Failures surface as a `NuclrCredentialException` whose `getReason()` is `UNAVAILABLE` or `ACCESS_FAILED`, never with the secret in the message. Obtaining the store does not touch or unlock the keyring.
+
+A new abstract method on `NuclrPluginContext`, it breaks any class that implements the context itself — test doubles, typically. Plugins that only *use* the context are unaffected.
 
 ## ⚠️ Breaking change in 4.0.0
 
@@ -46,7 +65,8 @@ Java baseline also moved from 21 to **25**. See [Migrating from 3.x](#migrating-
 
 - `BaseNuclrPlugin` — shared lifecycle and behaviour for every plugin
 - `QuickViewNuclrPlugin`, `FilePanelNuclrPlugin`, `FullscreenNuclrPlugin` — the three plugin shapes
-- `NuclrPluginContext` — access to the event bus, theme, settings, and locale
+- `NuclrPluginContext` — access to the event bus, theme, settings, locale, and credential store
+- `NuclrCredentialStore` — per-plugin secrets in the operating system's secure storage
 - `NuclrResource`, `NuclrMenuResource`, `NuclrContextMenuItem` — common model types
 - `NuclrEventBus` — cross-plugin and platform event messaging
 - `NuclrTerminalSession` — lets a file panel supply its own shell for the embedded console
@@ -60,6 +80,7 @@ Java baseline also moved from 21 to **25**. See [Migrating from 3.x](#migrating-
   - Returns a Swing `JComponent` from `panel()`
   - `openResource(NuclrResource, AtomicBoolean)` loads or refreshes the preview
   - When several viewers accept the same resource, the manifest's `priority` breaks the tie; **lower wins**
+  - Optionally draws still thumbnails through `supportsThumbnails()` and `thumbnail(...)` — see [Thumbnails](#thumbnails-)
 - **`FilePanelNuclrPlugin`** — provides a browser pane (local drives, archives, SSH, cloud buckets…)
   - `openResource(...)` returns a `NuclrResourceData` (entries + column names)
   - The streaming overload `openResource(resource, cancelled, EntrySink)` paints entries as they are discovered
@@ -97,12 +118,44 @@ Use `uuid()` to tell *instances* apart — `other.uuid().equals(uuid())` means t
 
 `openResource(...)` must do heavy work asynchronously, poll the supplied `AtomicBoolean` regularly, and abort cleanly when it becomes `true`. All UI updates must be dispatched to the EDT.
 
+### Thumbnails 🖼️
+
+A quick-view plugin that can draw a still picture of a resource — the first page, the cover, a frame — says so and draws it:
+
+```java
+@Override
+public boolean supportsThumbnails() { return true; }
+
+@Override
+public BufferedImage thumbnail(NuclrResource resource, int maxWidth, int maxHeight, AtomicBoolean cancelled) {
+    if (maxWidth <= 0 || maxHeight <= 0 || !supports(resource)) {
+        return null;
+    }
+    try (var in = resource.openInputStream()) {
+        BufferedImage page = render(in, cancelled);   // your own decoding
+        return cancelled.get() ? null : fitWithin(page, maxWidth, maxHeight);
+    } catch (Exception e) {
+        return null;                                  // no picture, not an error
+    }
+}
+```
+
+The contract:
+
+- **Separate and stateless.** It must not touch `panel()` or disturb the resource currently open, and it may be called on any thread, concurrently, and **before `init()`** — the host may ask a plugin it has only `preinit`ed.
+- **Within the box.** The result is no larger than `maxWidth` × `maxHeight` and keeps the resource's aspect ratio.
+- **`null` is an answer.** It means only that no picture was produced, for any reason; callers fall back to an icon. Don't throw.
+- **Cancellable.** Poll `cancelled` during long work and return `null` once it is set.
+- Override both methods together: `supportsThumbnails()` lets a caller skip asking a viewer that would only return `null`.
+
+Plugins cannot reach one another, so a plugin that *wants* a thumbnail asks Commander over the event bus, and Commander asks the viewers — see the Commander README.
+
 ## Core Model Types 🧱
 
 - **`NuclrResource`** — abstract base for everything shown in a panel. Its only constructor takes a `java.nio.file.Path`, which is `null` for virtual or remote resources. Lombok `@Data` generates the accessors for `uuid`, `name`, `fullPath`, `folder`, `hidden`, `link`, `readable`, `length`, the three timestamps, and a free-form `metadata` map. Equality and hashing are based on `uuid` alone. Override `openInputStream(OpenOption...)` if your resource can stream — the default throws `UnsupportedOperationException`.
 - **`NuclrMenuResource`** — describes menu contributions for file panels
 - **`NuclrContextMenuItem`** — entries for the right-click menu, dispatched back through `act(...)`
-- **`NuclrPluginContext`** — provides `getEventBus()`, `getTheme()`, `getSettings()`, and `getLocale()`
+- **`NuclrPluginContext`** — provides `getEventBus()`, `getTheme()`, `getSettings()`, `getLocale()`, and `getCredentialStore()`
 - **`NuclrSettings`** — a `(namespace, key)` store. Always pass a plugin-specific namespace to avoid collisions.
 - **`NuclrEventBus`** — `emit(...)` / `subscribe(NuclrEventListener)`. Events are plain `String` type identifiers with `Map<String, Object>` payloads; there is no compile-time type safety on payload shapes.
 
@@ -114,7 +167,7 @@ Every bundle carries a `plugin.json` at its root declaring what it contains. Sin
 {
   "schemaVersion": 1,
   "version": "1.0.0",
-  "platformSdkVersion": "4.0.0",
+  "platformSdkVersion": "6.0.0",
   "plugins": [
     {
       "class": "com.example.MyQuickViewPlugin",
@@ -142,7 +195,7 @@ Top level:
 |---|---|
 | `schemaVersion` | Manifest format version. Currently `1`. |
 | `version` | Version of the bundle as a whole. |
-| `platformSdkVersion` | SDK the bundle was built against. |
+| `platformSdkVersion` | SDK the bundle needs. Commander skips a bundle that asks for a newer SDK than its own. |
 | `plugins` | One entry per plugin class in the bundle — a bundle may ship several. |
 
 Per entry:
