@@ -19,7 +19,7 @@ Add the SDK to your plugin project. Use `provided` scope — the host applicatio
 <dependency>
     <groupId>dev.nuclr</groupId>
     <artifactId>platform-sdk</artifactId>
-    <version>6.0.0</version>
+    <version>6.1.0</version>
     <scope>provided</scope>
 </dependency>
 ```
@@ -31,6 +31,17 @@ https://central.sonatype.com/artifact/dev.nuclr/platform-sdk
 Commander skips a bundle whose manifest asks for a newer `platformSdkVersion` than the one it ships with, so declare the oldest SDK version that has everything your plugin calls.
 
 ## What's new 🆕
+
+### 6.1.0 — plugin actions
+
+A file panel can offer **actions**: named operations Commander can run for the user — from an AI agent or the command palette — without going through the plugin's UI. The plugin describes them in an `actions.json` (plus optional Markdown docs) in its JAR and runs them through its existing `act(...)`. See [docs/actions-schema.md](docs/actions-schema.md) for the format and the contract.
+
+- `FilePanelNuclrPlugin.getActionsJson()` — the actions as JSON; reads `actions.json` from the plugin class's package by default
+- `NuclrPluginCallback.onResult(Map)` — an action's result
+- `NuclrPluginCallback.onOutput(String)` — output streamed while an action runs
+- `NuclrPluginCallback.confirm(title, details, diff)` — ask the user to approve a step the plugin can judge; `false` unless the user explicitly approves
+
+All are default methods, so existing plugins compile and run unchanged.
 
 ### 6.0.0 — quick-view thumbnails
 
@@ -167,7 +178,7 @@ Every bundle carries a `plugin.json` at its root declaring what it contains. Sin
 {
   "schemaVersion": 1,
   "version": "1.0.0",
-  "platformSdkVersion": "6.0.0",
+  "platformSdkVersion": "6.1.0",
   "plugins": [
     {
       "class": "com.example.MyQuickViewPlugin",

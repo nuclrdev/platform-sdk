@@ -18,6 +18,8 @@
 package dev.nuclr.platform.plugin;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -285,6 +287,46 @@ public non-sealed interface FilePanelNuclrPlugin extends BaseNuclrPlugin {
 	default void walkDescendants(NuclrResource resource, Consumer<NuclrResource> visitor, AtomicBoolean cancelled, boolean recursive)
 			throws IOException {
 		throw new IOException("walkDescendants not implemented for this plugin");
+	}
+
+	/**
+	 * Return the actions this plugin offers to the commander - to AI agents and the
+	 * command palette - as JSON in the format described in
+	 * {@code docs/actions-schema.md}, or {@code null} if it offers none.
+	 *
+	 * <p>Each action is invoked through {@link #act}: {@code actionType} is the
+	 * action's {@code id} and {@code data} holds its arguments, already checked
+	 * against the action's {@code input} schema by the commander. The action reports
+	 * its result through {@link NuclrPluginCallback#onResult}, streams text through
+	 * {@link NuclrPluginCallback#onOutput}, and asks the user to approve a step only
+	 * it can judge through {@link NuclrPluginCallback#confirm}. Whether a call needs
+	 * approval in general is decided by the commander, from the action's declared
+	 * {@code class}, not by the plugin.
+	 *
+	 * <p>A plugin that declares actions must accept {@link #act} on an instance the
+	 * commander created only to run them: {@link #preinit} and {@link #init} have
+	 * run, the instance is never shown in a pane, and {@code act} is called with
+	 * {@code other == null}, an empty {@code selectedResources} and a {@code null}
+	 * {@code focusedResource}. State shared between panes and actions (open
+	 * connections, say) therefore belongs outside any single instance.
+	 *
+	 * <p>The default reads {@code actions.json} from the plugin class's own package
+	 * - for {@code com.example.panel.MyPanel}, the JAR resource
+	 * {@code com/example/panel/actions.json} - so most plugins only add that file.
+	 * The name is package-relative on purpose: plugin class loaders consult the
+	 * commander's class loader first, so a root-level name could resolve to some
+	 * other file of the same name. Override to build the list at runtime. Called off
+	 * the event dispatch thread; must not show UI.
+	 *
+	 * @return the actions JSON, or {@code null} if this plugin offers no actions
+	 * @since 6.1.0
+	 */
+	default String getActionsJson() {
+		try (InputStream in = getClass().getResourceAsStream("actions.json")) {
+			return in == null ? null : new String(in.readAllBytes(), StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			return null;
+		}
 	}
 
 }

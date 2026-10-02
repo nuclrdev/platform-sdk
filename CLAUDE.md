@@ -77,6 +77,7 @@ The manifest's `version` should be `${project.version}` with Maven resource filt
 - `NuclrSettings` uses a `(namespace, key)` model — always pass a plugin-specific namespace to avoid key collisions
 - `NuclrEventBus` events use plain `String` type identifiers and `Map<String, Object>` payloads (no compile-time type safety on payload shapes)
 - A plugin declared `"singleton": false` must return a distinct `uuid()` per instance
+- Actions (6.1.0): a file panel describes them in `actions.json` (format in `docs/actions-schema.md`), returned by `FilePanelNuclrPlugin.getActionsJson()`, and runs them through `act(...)`, reporting via `NuclrPluginCallback.onResult/onOutput/confirm`. The default looks the file up **next to the plugin class** (package-relative): plugin class loaders are parent-first, so a root-level `/actions.json` could resolve to a same-named file on the host's classpath. `confirm` defaults to `false` on purpose: a caller that cannot ask the user must never mean "yes". Approval policy lives in Commander, keyed on each action's declared `class` (`read`/`write`/`unrestricted`) — keep risk analysis of arbitrary input out of the SDK and plugins
 
 ## Code Conventions
 

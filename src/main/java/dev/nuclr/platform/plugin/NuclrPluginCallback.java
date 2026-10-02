@@ -17,6 +17,8 @@
  */
 package dev.nuclr.platform.plugin;
 
+import java.util.Map;
+
 /**
  * Generic progress and cancellation bridge passed by the commander to every
  * {@link dev.nuclr.platform.events.NuclrEventListener#handleMessage} call.
@@ -84,5 +86,60 @@ public interface NuclrPluginCallback {
 	 * @return {@code true} if the operation has been cancelled
 	 */
 	boolean isCancelled();
+
+	/**
+	 * Report the result of an action declared in
+	 * {@link FilePanelNuclrPlugin#getActionsJson()}. The map must match the
+	 * action's {@code output} schema; values are JSON-compatible: {@code String},
+	 * {@code Number}, {@code Boolean}, {@code null}, {@code List} and {@code Map}.
+	 * Call at most once per invocation, before the final {@link #onComplete()}.
+	 * Callers that do not use results ignore it.
+	 *
+	 * @param result the action's result, never {@code null}
+	 * @since 6.1.0
+	 */
+	default void onResult(Map<String, Object> result) {
+		// default implementation ignores the result
+	}
+
+	/**
+	 * Stream text produced while an action runs - a command's output, say - so it
+	 * can be shown as it arrives instead of only in the final result. May be called
+	 * any number of times; chunks are not necessarily whole lines.
+	 *
+	 * @param chunk the next piece of output, never {@code null}
+	 * @since 6.1.0
+	 */
+	default void onOutput(String chunk) {
+		// default implementation ignores output
+	}
+
+	/**
+	 * Ask the user to approve a step that this plugin can judge with certainty -
+	 * overwriting an existing file, for example - before taking it. Whether an
+	 * action needs approval in general is the commander's decision, made from the
+	 * action's declared {@code class}; do not try to classify the danger of
+	 * arbitrary input here.
+	 *
+	 * <p>Blocks until the user answers, so never call it on the event dispatch
+	 * thread. Never pass secrets through it: the text may be shown, logged and seen
+	 * by the agent that requested the action.
+	 *
+	 * <p>Returns {@code true} only on explicit approval. Deny, closing the prompt,
+	 * cancellation and callers that cannot ask anyone all return {@code false} -
+	 * the default - so a step is never taken without a real "yes".
+	 *
+	 * @param title   one line saying what is about to happen, e.g.
+	 *                "Overwrite /etc/nginx/nginx.conf on nuclr-web?"
+	 * @param details plain text: where, why, and what cannot be undone; may be
+	 *                {@code null}
+	 * @param diff    the change as a unified diff (as produced by {@code diff -u}),
+	 *                or {@code null} if there is nothing to show
+	 * @return {@code true} if the user approved the step
+	 * @since 6.1.0
+	 */
+	default boolean confirm(String title, String details, String diff) {
+		return false;
+	}
 
 }
